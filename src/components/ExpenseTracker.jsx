@@ -12,6 +12,28 @@ export default function ExpenseTracker({ expenses, budget, updateExpenses, updat
     date: "2026-07-17"
   });
 
+  // Standalone calculator state
+  const [calcEur, setCalcEur] = useState("");
+  const [calcCny, setCalcCny] = useState("");
+
+  const handleCalcEurChange = (val) => {
+    setCalcEur(val);
+    if (val === "" || isNaN(val)) {
+      setCalcCny("");
+    } else {
+      setCalcCny((parseFloat(val) * exchangeRate).toFixed(2));
+    }
+  };
+
+  const handleCalcCnyChange = (val) => {
+    setCalcCny(val);
+    if (val === "" || isNaN(val)) {
+      setCalcEur("");
+    } else {
+      setCalcEur((parseFloat(val) / exchangeRate).toFixed(2));
+    }
+  };
+
   const categories = ["Vuelos", "Hoteles", "Trenes", "Comida", "Entradas", "Compras", "Otros"];
 
   // Colors for categories
@@ -97,7 +119,12 @@ export default function ExpenseTracker({ expenses, budget, updateExpenses, updat
               type="number" 
               step="0.01"
               value={exchangeRate} 
-              onChange={(e) => setExchangeRate(parseFloat(e.target.value) || 1)} 
+              onChange={(e) => {
+                const val = parseFloat(e.target.value) || 1;
+                setExchangeRate(val);
+                // recalculate calculator if values present
+                if (calcEur !== "") setCalcCny((parseFloat(calcEur) * val).toFixed(2));
+              }} 
             />
           </div>
         </div>
@@ -120,8 +147,9 @@ export default function ExpenseTracker({ expenses, budget, updateExpenses, updat
       {/* Grid: Charts & Expense List */}
       <div className="expenses-grid">
         
-        {/* Left Column: Category Breakdown */}
+        {/* Left Column: Category Breakdown & Instant Calculator */}
         <div className="expenses-col">
+          {/* Charts card */}
           <div className="card glass-panel">
             <h3 className="card-title">Desglose por Categoría</h3>
             <div className="category-chart-list">
@@ -145,6 +173,36 @@ export default function ExpenseTracker({ expenses, budget, updateExpenses, updat
                 );
               })}
             </div>
+          </div>
+
+          {/* INSTANT CONVERTER WIDGET (TRAVEL UX ENHANCEMENT) */}
+          <div className="card glass-panel quick-converter-card">
+            <h3 className="card-title">
+              <IconDollar className="w-5 h-5 text-gold" /> Calculadora de Cambio Rápido
+            </h3>
+            <p className="card-description">Convierte importes al instante sin guardarlos en el historial:</p>
+            <div className="converter-flex">
+              <div className="converter-input-box">
+                <label>Euros (€)</label>
+                <input 
+                  type="number" 
+                  placeholder="0.00"
+                  value={calcEur}
+                  onChange={(e) => handleCalcEurChange(e.target.value)}
+                />
+              </div>
+              <div className="converter-sign">⇄</div>
+              <div className="converter-input-box">
+                <label>Yuanes (¥)</label>
+                <input 
+                  type="number" 
+                  placeholder="0.00"
+                  value={calcCny}
+                  onChange={(e) => handleCalcCnyChange(e.target.value)}
+                />
+              </div>
+            </div>
+            <p className="converter-note">Basado en tu tipo de cambio actual: 1€ = {exchangeRate} ¥</p>
           </div>
         </div>
 

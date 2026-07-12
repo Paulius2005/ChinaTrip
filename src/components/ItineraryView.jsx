@@ -5,7 +5,7 @@ import {
   IconCheck, IconInfo, IconChevronDown, IconChevronRight, IconClock
 } from "./Icons";
 
-export default function ItineraryView({ itinerary, updateItinerary }) {
+export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelper }) {
   const [selectedCity, setSelectedCity] = useState("Todas");
   const [expandedDays, setExpandedDays] = useState({ "day-1": true, "day-2": true }); // Default expanded days
   
@@ -208,18 +208,31 @@ export default function ItineraryView({ itinerary, updateItinerary }) {
                       <div className="meta-card">
                         <div className="meta-card-header">
                           <span className="meta-card-title">Alojamiento</span>
-                          <button 
-                            className={`status-badge ${day.lodging.bookingStatus}`}
-                            onClick={() => toggleBookingStatus(day.id, "lodging")}
-                            title="Haz clic para cambiar estado"
-                          >
-                            {day.lodging.bookingStatus === "booked" ? "Reservado" : "Pendiente"}
-                          </button>
+                          <div className="lodging-status-actions">
+                            {day.lodging.name !== "Noche a bordo del avión" && day.lodging.name !== "Tu casa" && (
+                              <button 
+                                type="button" 
+                                className="taxi-trigger-pill bg-gold text-dark"
+                                onClick={() => showTaxiHelper(day.lodging)}
+                                title="Mostrar dirección en caracteres chinos grandes al taxista"
+                              >
+                                🚕 Taxista
+                              </button>
+                            )}
+                            <button 
+                              className={`status-badge ${day.lodging.bookingStatus}`}
+                              onClick={() => toggleBookingStatus(day.id, "lodging")}
+                              title="Haz clic para cambiar estado"
+                            >
+                              {day.lodging.bookingStatus === "booked" ? "Reservado" : "Pendiente"}
+                            </button>
+                          </div>
                         </div>
                         <div className="meta-card-body">
                           <IconHotel className="w-5 h-5 text-jade" />
                           <div className="lodging-info">
                             <span className="lodging-name">{day.lodging.name}</span>
+                            {day.lodging.nameChinese && <span className="lodging-chinese-sub">{day.lodging.nameChinese}</span>}
                             <span className="lodging-address">{day.lodging.address}</span>
                           </div>
                         </div>
@@ -424,7 +437,7 @@ export default function ItineraryView({ itinerary, updateItinerary }) {
               <h4>Alojamiento</h4>
               <div className="form-row-2">
                 <div className="form-group">
-                  <label>Nombre del Alojamiento</label>
+                  <label>Nombre del Alojamiento (Español/Inglés)</label>
                   <input 
                     type="text" 
                     value={editingDay.lodging?.name || ""} 
@@ -432,36 +445,63 @@ export default function ItineraryView({ itinerary, updateItinerary }) {
                       ...editingDay,
                       lodging: { ...(editingDay.lodging || { bookingStatus: "pending", address: "" }), name: e.target.value }
                     })}
-                    placeholder="Ej. Hotel de la Campana"
+                    placeholder="Ej. The Bund Hotel"
                   />
                 </div>
-                {editingDay.lodging && (
-                  <div className="form-group">
-                    <label>Estado de Alojamiento</label>
-                    <select 
-                      value={editingDay.lodging.bookingStatus}
-                      onChange={(e) => setEditingDay({
-                        ...editingDay,
-                        lodging: { ...editingDay.lodging, bookingStatus: e.target.value }
-                      })}
-                    >
-                      <option value="pending">Pendiente</option>
-                      <option value="booked">Reservado</option>
-                    </select>
-                  </div>
-                )}
-              </div>
-              {editingDay.lodging && (
                 <div className="form-group">
-                  <label>Dirección</label>
+                  <label>Nombre del Alojamiento (Chino - Para Taxista)</label>
                   <input 
                     type="text" 
-                    value={editingDay.lodging.address || ""} 
+                    value={editingDay.lodging?.nameChinese || ""} 
                     onChange={(e) => setEditingDay({
                       ...editingDay,
-                      lodging: { ...editingDay.lodging, address: e.target.value }
+                      lodging: { ...(editingDay.lodging || { bookingStatus: "pending", name: "", address: "" }), nameChinese: e.target.value }
                     })}
+                    placeholder="Ej. 上海外滩大酒店"
                   />
+                </div>
+              </div>
+
+              <div className="form-row-2">
+                <div className="form-group">
+                  <label>Dirección del Alojamiento (Inglés)</label>
+                  <input 
+                    type="text" 
+                    value={editingDay.lodging?.address || ""} 
+                    onChange={(e) => setEditingDay({
+                      ...editingDay,
+                      lodging: { ...(editingDay.lodging || { bookingStatus: "pending", name: "" }), address: e.target.value }
+                    })}
+                    placeholder="Ej. 528 Henan Middle Rd, Shanghai"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Dirección del Alojamiento (Chino - Para Taxista)</label>
+                  <input 
+                    type="text" 
+                    value={editingDay.lodging?.addressChinese || ""} 
+                    onChange={(e) => setEditingDay({
+                      ...editingDay,
+                      lodging: { ...(editingDay.lodging || { bookingStatus: "pending", name: "", address: "" }), addressChinese: e.target.value }
+                    })}
+                    placeholder="Ej. 上海市黄浦区河南中路528号"
+                  />
+                </div>
+              </div>
+
+              {editingDay.lodging && (
+                <div className="form-group">
+                  <label>Estado de Reserva de Alojamiento</label>
+                  <select 
+                    value={editingDay.lodging.bookingStatus}
+                    onChange={(e) => setEditingDay({
+                      ...editingDay,
+                      lodging: { ...editingDay.lodging, bookingStatus: e.target.value }
+                    })}
+                  >
+                    <option value="pending">Pendiente</option>
+                    <option value="booked">Reservado</option>
+                  </select>
                 </div>
               )}
 

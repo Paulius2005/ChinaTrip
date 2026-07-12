@@ -34,7 +34,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "The Bund Hotel (o similar)",
+      nameChinese: "上海外滩大酒店",
       address: "528 Henan Middle Rd, Huangpu, Shanghai",
+      addressChinese: "上海市黄浦区河南中路528号 (近北京东路)",
       bookingStatus: "booked"
     },
     activities: [
@@ -58,7 +60,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "The Bund Hotel (o similar)",
+      nameChinese: "上海外滩大酒店",
       address: "528 Henan Middle Rd, Huangpu, Shanghai",
+      addressChinese: "上海市黄浦区河南中路528号 (近北京东路)",
       bookingStatus: "booked"
     },
     activities: [
@@ -82,7 +86,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Jiefangbei Mountain View Hotel",
+      nameChinese: "重庆解放碑山景酒店",
       address: "Jiefangbei Pedestrian Street, Yuzhong District, Chongqing",
+      addressChinese: "重庆市渝中区解放碑步行街/民族路",
       bookingStatus: "booked"
     },
     activities: [
@@ -106,7 +112,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Jiefangbei Mountain View Hotel",
+      nameChinese: "重庆解放碑山景酒店",
       address: "Jiefangbei Pedestrian Street, Yuzhong District, Chongqing",
+      addressChinese: "重庆市渝中区解放碑步行街/民族路",
       bookingStatus: "booked"
     },
     activities: [
@@ -130,7 +138,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Jiefangbei Mountain View Hotel",
+      nameChinese: "重庆解放碑山景酒店",
       address: "Jiefangbei Pedestrian Street, Yuzhong District, Chongqing",
+      addressChinese: "重庆市渝中区解放碑步行街/民族路",
       bookingStatus: "booked"
     },
     activities: [
@@ -154,7 +164,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Chengdu Zen Tea House Hotel",
+      nameChinese: "成都禅茶一味酒店",
       address: "Wuhou District, Chengdu, Sichuan",
+      addressChinese: "四川省成都市武侯区 (近武侯祠/锦里)",
       bookingStatus: "booked"
     },
     activities: [
@@ -178,7 +190,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Chengdu Zen Tea House Hotel",
+      nameChinese: "成都禅茶一味酒店",
       address: "Wuhou District, Chengdu, Sichuan",
+      addressChinese: "四川省成都市武侯区 (近武侯祠/锦里)",
       bookingStatus: "booked"
     },
     activities: [
@@ -202,7 +216,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Chengdu Zen Tea House Hotel",
+      nameChinese: "成都禅茶一味酒店",
       address: "Wuhou District, Chengdu, Sichuan",
+      addressChinese: "四川省成都市武侯区 (近武侯祠/锦里)",
       bookingStatus: "booked"
     },
     activities: [
@@ -226,7 +242,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Bell Tower Hotel Xi'an",
+      nameChinese: "西安钟楼饭店",
       address: "110 South Street, Beilin District, Xi'an",
+      addressChinese: "陕西省西安市碑林区南大街110号",
       bookingStatus: "booked"
     },
     activities: [
@@ -250,7 +268,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Bell Tower Hotel Xi'an",
+      nameChinese: "西安钟楼饭店",
       address: "110 South Street, Beilin District, Xi'an",
+      addressChinese: "陕西省西安市碑林区南大街110号",
       bookingStatus: "booked"
     },
     activities: [
@@ -274,7 +294,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Beijing Novotel Peace Hotel",
+      nameChinese: "北京诺富特和平宾馆",
       address: "3 Jinyu Hutong, Wangfujing, Dongcheng, Beijing",
+      addressChinese: "北京市东城区王府井金鱼胡同3号",
       bookingStatus: "booked"
     },
     activities: [
@@ -298,7 +320,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Beijing Novotel Peace Hotel",
+      nameChinese: "北京诺富特和平宾馆",
       address: "3 Jinyu Hutong, Wangfujing, Dongcheng, Beijing",
+      addressChinese: "北京市东城区王府井金鱼胡同3号",
       bookingStatus: "booked"
     },
     activities: [
@@ -322,7 +346,9 @@ export const initialItinerary = [
     },
     lodging: {
       name: "Beijing Novotel Peace Hotel",
+      nameChinese: "北京诺富特和平宾馆",
       address: "3 Jinyu Hutong, Wangfujing, Dongcheng, Beijing",
+      addressChinese: "北京市东城区王府井金鱼胡同3号",
       bookingStatus: "booked"
     },
     activities: [
@@ -380,7 +406,7 @@ export const initialSurvival = {
   apps: [
     { name: "Alipay", desc: "Esencial para pagos móviles, enlazar tarjeta Visa/Mastercard. Incluye DiDi (taxis) y transporte público local.", category: "Pagos" },
     { name: "WeChat", desc: "El WhatsApp de China. Se usa para chat, reservar entradas (Ciudad Prohibida) y pagar con WeChat Pay.", category: "Pagos y Chat" },
-    { name: "Astrill / LetsVPN", desc: "VPNs para saltarse el Gran Cortafuegos de China. LetsVPN funciona excelentemente ahora mismo.", category: "Conectividad" },
+    { name: "Astrill / LetsVPN", desc: "VPNs para saltarse el Gran Cortafuegos de China. LetsVPN funciona de maravilla ahora mismo.", category: "Conectividad" },
     { name: "Apple Maps / Baidu Maps", desc: "Google Maps está obsoleto allí. Apple Maps funciona muy bien; si no, usa Baidu Maps.", category: "Navegación" },
     { name: "MetroMan", desc: "La mejor app de mapas de metro offline para todas las ciudades chinas.", category: "Navegación" },
     { name: "Microsoft Translator", desc: "Permite descargar diccionario offline de Chino para traducir con cámara y voz.", category: "Idioma" },
@@ -396,7 +422,7 @@ export const initialSurvival = {
     { esp: "¿Cuánto cuesta?", pinyin: "Duōshǎo qián?", hanzi: "多少钱？" },
     { esp: "No picante (muy importante)", pinyin: "Bù là", hanzi: "不辣" },
     { esp: "Tengo alergia a...", pinyin: "Wǒ duì ... guòmǐn", hanzi: "我对...过敏" },
-    { esp: "Agua del grifo hervida", pinyin: "Kāishuǐ", hanzi: "开水" },
+    { esp: "Agua del grifo de agua hervida", pinyin: "Kāishuǐ", hanzi: "开水" },
     { esp: "La cuenta", pinyin: "Mǎidān", hanzi: "买单" },
     { esp: "Baño / Aseo", pinyin: "Cèsuǒ", hanzi: "厕所" },
     { esp: "No entiendo", pinyin: "Wǒ tīng bù dǒng", hanzi: "听不懂" }

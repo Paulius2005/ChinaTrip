@@ -46,7 +46,7 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: 80px; /* Leave room for mobile nav bar */
+  padding-bottom: 80px; /* Room for mobile nav bar */
 }
 
 /* Scrollbar styling */
@@ -107,6 +107,39 @@ body {
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* SYSTEM ALERT BANNER */
+.system-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-family: var(--font-title);
+  font-weight: 500;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation: slideInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sync-btn-banner {
+  background: var(--text-dark);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-left: auto;
+  font-weight: 600;
+}
+.sync-btn-banner:hover {
+  background: #1e293b;
+}
+
+@keyframes slideInDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 /* Buttons Styles */
@@ -185,7 +218,7 @@ input:focus, select:focus, textarea:focus {
 }
 .form-row-3 {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1.5fr;
+  grid-template-columns: 1.2fr 1fr 1.2fr;
   gap: 12px;
 }
 .form-actions {
@@ -206,6 +239,7 @@ input:focus, select:focus, textarea:focus {
 .text-jade { color: var(--jade-primary) !important; }
 .text-gold { color: var(--gold-primary) !important; }
 .text-orange { color: var(--orange-primary) !important; }
+.text-dark { color: var(--text-dark) !important; }
 .bg-red { background-color: var(--red-primary) !important; }
 .bg-jade { background-color: var(--jade-primary) !important; }
 .bg-gold { background-color: var(--gold-primary) !important; }
@@ -215,6 +249,8 @@ input:focus, select:focus, textarea:focus {
 .bg-purple { background-color: #a855f7 !important; }
 .bg-gray { background-color: var(--gray-primary) !important; }
 .shrink-0 { flex-shrink: 0; }
+.mr-1 { margin-right: 4px; }
+.text-center { text-align: center; }
 
 /* LAYOUT STRUCTURE */
 .app-layout {
@@ -255,6 +291,7 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
   gap: 6px;
   margin-top: 2px;
+  cursor: pointer;
 }
 
 .status-indicator.synced {
@@ -263,6 +300,18 @@ input:focus, select:focus, textarea:focus {
 
 .status-indicator.offline {
   color: var(--gold-primary);
+}
+
+.status-indicator.pending {
+  color: var(--orange-primary);
+  text-decoration: underline;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
 }
 
 .header-nav {
@@ -375,7 +424,6 @@ input:focus, select:focus, textarea:focus {
   text-transform: uppercase;
 }
 
-/* Simple Pagoda decorative graphic */
 .hero-artwork {
   width: 140px;
   height: 140px;
@@ -394,6 +442,233 @@ input:focus, select:focus, textarea:focus {
   left: 30px;
 }
 
+/* DYNAMIC TODAY ITINERARY CARD */
+.today-itinerary-card {
+  padding: 24px;
+  border-color: rgba(16, 185, 129, 0.25);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 24, 39, 0.7) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.today-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 16px;
+}
+
+.today-title-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.today-badge {
+  background: var(--jade-primary);
+  color: white;
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.today-date-text {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.preview-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.preview-selector label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.preview-selector select {
+  width: auto;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.today-card-body-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.today-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.today-day-title {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.today-lodging-box {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.today-lodging-details {
+  display: flex;
+  gap: 12px;
+}
+
+.today-hotel-lbl {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.today-hotel-name {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.today-hotel-address {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.btn-taxi-trigger {
+  width: 100%;
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.btn-taxi-trigger:hover {
+  background: #f59e0b;
+  transform: scale(1.01);
+}
+
+.today-transport-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+.status-tag.booked {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+.status-tag.pending {
+  background: rgba(249, 115, 22, 0.15);
+  color: #fdba74;
+}
+
+.today-activities-box {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.today-activities-box h4 {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 6px;
+}
+
+.no-acts {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: auto;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.today-activities-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.today-act-item {
+  display: flex;
+  gap: 10px;
+  font-size: 0.85rem;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+}
+.today-act-item:last-child {
+  border-bottom: none;
+}
+
+.act-time-lbl {
+  font-family: var(--font-title);
+  font-weight: 600;
+  color: var(--gold-primary);
+  min-width: 42px;
+}
+
+.act-bullet-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.act-title-lbl {
+  font-weight: 600;
+}
+
+.act-desc-lbl {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* GENERAL DASHBOARD LAYOUT */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -600,6 +875,150 @@ input:focus, select:focus, textarea:focus {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--blue-primary);
+}
+
+/* EMERGENCY TRAVEL CARD */
+.emergency-card {
+  border-color: rgba(239, 68, 68, 0.25);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(17, 24, 39, 0.7) 100%);
+}
+
+.emergency-numbers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.emg-call-btn {
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.emg-call-btn:hover {
+  background: var(--red-primary);
+  box-shadow: 0 4px 15px var(--red-glow);
+  transform: translateY(-2px);
+}
+
+.emg-num {
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  font-weight: 850;
+  color: #fca5a5;
+  display: block;
+}
+.emg-call-btn:hover .emg-num {
+  color: white;
+}
+
+.emg-lbl {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.emg-call-btn:hover .emg-lbl {
+  color: #fee2e2;
+}
+
+.consular-info-box {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.consular-info-box h5 {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.consular-info-box p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.consular-info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.consular-info-box a {
+  color: var(--gold-primary);
+  text-decoration: none;
+}
+.consular-info-box a:hover {
+  text-decoration: underline;
+}
+
+.emergency-translations-section h5 {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.emg-phrases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emg-phrase-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--glass-border);
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.emg-phrase-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.emg-phrase-meanings {
+  display: flex;
+  flex-direction: column;
+}
+
+.emg-phrase-esp {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.emg-phrase-hanzi {
+  font-size: 0.95rem;
+  color: #fca5a5;
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+.emg-speak-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.emg-phrase-row:hover .emg-speak-btn {
+  background: var(--red-primary);
 }
 
 /* ITINERARY TIMELINE VIEW */
@@ -812,6 +1231,22 @@ input:focus, select:focus, textarea:focus {
   text-transform: uppercase;
 }
 
+.lodging-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.taxi-trigger-pill {
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 4px;
+}
+.taxi-trigger-pill:hover {
+  background: #f59e0b;
+}
+
 .status-badge {
   padding: 2px 8px;
   font-size: 0.7rem;
@@ -851,9 +1286,16 @@ input:focus, select:focus, textarea:focus {
   font-weight: 600;
 }
 
+.lodging-chinese-sub {
+  font-size: 0.75rem;
+  color: var(--gold-primary);
+  margin-top: 1px;
+}
+
 .lodging-address {
   font-size: 0.75rem;
   color: var(--text-muted);
+  margin-top: 2px;
 }
 
 .day-notes-box {
@@ -1177,6 +1619,48 @@ input:focus, select:focus, textarea:focus {
   height: 100%;
   border-radius: 4px;
   transition: width 0.4s ease;
+}
+
+/* INSTANT CURRENCY CONVERTER */
+.quick-converter-card {
+  border-color: rgba(234, 179, 8, 0.2);
+}
+
+.converter-flex {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.converter-input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-grow: 1;
+}
+.converter-input-box label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.converter-input-box input {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.converter-sign {
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  margin-top: 24px;
+}
+
+.converter-note {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  text-align: right;
+  font-style: italic;
 }
 
 .expenses-list-header {
@@ -1591,16 +2075,40 @@ input:focus, select:focus, textarea:focus {
   padding: 24px;
 }
 
+.phrases-subheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .phrases-header-info {
   background: rgba(59, 130, 246, 0.05);
   border: 1px solid rgba(59, 130, 246, 0.15);
   border-radius: 10px;
   padding: 12px;
-  margin-bottom: 20px;
   display: flex;
   gap: 8px;
   align-items: center;
   font-size: 0.85rem;
+  flex-grow: 1;
+}
+
+.add-phrase-inline-form {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.add-phrase-inline-form h4 {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 12px;
 }
 
 .phrases-list-grid {
@@ -1643,6 +2151,12 @@ input:focus, select:focus, textarea:focus {
   color: var(--text-main);
 }
 
+.phrase-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .speak-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--glass-border);
@@ -1658,6 +2172,17 @@ input:focus, select:focus, textarea:focus {
 .speak-btn:hover {
   background: var(--red-primary);
   border-color: var(--red-primary);
+}
+
+.delete-phrase-btn-card {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.2);
+  padding: 6px;
+  border-radius: 50%;
+}
+.delete-phrase-btn-card:hover {
+  background: rgba(220, 38, 38, 0.15);
+  color: #ef4444;
 }
 
 .tips-list-grid {
@@ -1773,6 +2298,188 @@ input:focus, select:focus, textarea:focus {
   color: var(--red-primary);
 }
 
+/* FULLSCREEN TAXI HELPER MODAL (CRITICAL UX FEATURE) */
+.taxi-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.taxi-modal-content {
+  width: 100%;
+  max-width: 650px;
+  background: #111827;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  animation: modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* High Contrast Yellow Theme for drivers */
+.taxi-modal-content.high-contrast {
+  background: #ffcc00 !important;
+  color: #000 !important;
+  border: 5px solid #000 !important;
+}
+
+.taxi-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--red-primary);
+  border-radius: 6px;
+  font-weight: 700;
+}
+.taxi-modal-content.high-contrast .taxi-close-btn {
+  background: #000;
+  color: #ffcc00;
+}
+
+.taxi-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 12px;
+}
+.taxi-modal-content.high-contrast .taxi-modal-header {
+  border-bottom: 2px solid #000;
+}
+
+.taxi-card-badge {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255,255,255,0.05);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.taxi-modal-content.high-contrast .taxi-card-badge {
+  background: #000;
+  color: #ffcc00;
+}
+
+.contrast-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.taxi-modal-content.high-contrast .contrast-toggle-btn {
+  background: #000;
+  color: #ffcc00;
+}
+
+.speak-btn-large {
+  background: var(--red-primary);
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.taxi-card-body {
+  padding: 10px 0;
+}
+
+.taxi-chinese-intro {
+  font-size: 1.15rem;
+  margin-bottom: 16px;
+}
+.taxi-modal-content.high-contrast .taxi-chinese-intro {
+  color: #000;
+  font-weight: 600;
+}
+
+.taxi-address-box {
+  background: rgba(0,0,0,0.4);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.taxi-modal-content.high-contrast .taxi-address-box {
+  background: #fff;
+  border: 3px solid #000;
+  color: #000;
+}
+
+.taxi-hotel-name-chinese {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+}
+
+.taxi-hotel-address-chinese {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-top: 12px;
+  line-height: 1.4;
+  color: var(--gold-primary);
+}
+.taxi-modal-content.high-contrast .taxi-hotel-address-chinese {
+  color: #c2410c; /* High contrast dark orange/red on white */
+}
+
+.taxi-address-english-box {
+  padding: 0 10px;
+  opacity: 0.7;
+}
+.taxi-modal-content.high-contrast .taxi-address-english-box {
+  opacity: 0.85;
+  color: #000;
+}
+
+.taxi-hotel-name-english {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.taxi-hotel-address-english {
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.taxi-modal-footer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 12px;
+}
+.taxi-modal-content.high-contrast .taxi-modal-footer {
+  border-top: 2px solid #000;
+  color: #1e293b;
+  font-weight: 500;
+}
+
 /* RESPONSIVE DESIGN */
 @media (max-width: 1024px) {
   .dashboard-grid, .expenses-grid, .packing-grid {
@@ -1807,6 +2514,17 @@ input:focus, select:focus, textarea:focus {
   
   .countdown-grid {
     margin-top: 16px;
+  }
+
+  .today-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .today-card-body-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .day-header-main {
@@ -1846,5 +2564,15 @@ input:focus, select:focus, textarea:focus {
 
   .activity-time-row {
     flex-direction: row;
+  }
+  
+  .taxi-hotel-name-chinese {
+    font-size: 1.6rem;
+  }
+  .taxi-hotel-address-chinese {
+    font-size: 1.1rem;
+  }
+  .taxi-modal-content {
+    padding: 20px 16px;
   }
 }
