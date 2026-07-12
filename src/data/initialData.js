@@ -7,7 +7,7 @@ export const initialItinerary = [
     title: "Vuelo Barcelona (BCN) - Shanghái (PVG)",
     transport: {
       type: "flight",
-      details: "Vuelo internacional Air China CA840. BCN 15:30 -> PVG 10:30 (+1).",
+      details: "Vuelo internacional Air China CA840. BCN 12:10 -> PVG 06:45 (+1).",
       bookingStatus: "booked"
     },
     lodging: {
@@ -16,8 +16,8 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-1-1", time: "12:30", title: "Llegada al Aeropuerto de Barcelona-El Prat", description: "Llegar con 3 horas de antelación al terminal T1 para facturar equipaje y pasar control de seguridad.", category: "transit" },
-      { id: "act-1-2", time: "15:30", title: "Despegue del vuelo CA840", description: "Vuelo directo operado por Air China hacia Shanghái Pudong (PVG) en un Airbus A350-900. ¡Buen vuelo!", category: "transit" }
+      { id: "act-1-1", time: "09:10", title: "Llegada al Aeropuerto de Barcelona-El Prat", description: "Llegar con 3 horas de antelación al terminal T1 para facturar equipaje y pasar control de seguridad.", category: "transit" },
+      { id: "act-1-2", time: "12:10", title: "Despegue del vuelo CA840", description: "Vuelo directo operado por Air China hacia Shanghái Pudong (PVG) en un Airbus A350-900. ¡Buen vuelo!", category: "transit" }
     ],
     notes: "Lleva encima tu pasaporte original y comprueba que has descargado e instalado tu eSIM/VPN antes de despegar."
   },
@@ -40,8 +40,8 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-2-1", time: "10:30", title: "Aterrizaje en Shanghái Pudong (PVG)", description: "Llegada al Terminal 2. Inmigración (toma de huellas), recogida de maletas. Activar eSIM y VPN.", category: "transit" },
-      { id: "act-2-2", time: "13:00", title: "Check-in en Youli Hotel", description: "Registro con pasaporte físico original. El hotel está fantásticamente ubicado cerca de la Plaza del Pueblo.", category: "hotel" },
+      { id: "act-2-1", time: "06:45", title: "Aterrizaje en Shanghái Pudong (PVG)", description: "Llegada al Terminal 2. Inmigración (toma de huellas), recogida de maletas. Activar eSIM y VPN.", category: "transit" },
+      { id: "act-2-2", time: "10:30", title: "Llegada al Youli Hotel", description: "Registro con pasaporte físico original. El hotel está fantásticamente ubicado cerca de la Plaza del Pueblo.", category: "hotel" },
       { id: "act-2-3", time: "18:00", title: "Paseo por The Bund al atardecer", description: "Primer contacto visual con el espectacular skyline iluminado de Pudong y los edificios de Puxi.", category: "sightseeing" },
       { id: "act-2-4", time: "20:00", title: "Cena en Nanjing Road", description: "Probar dumplings y comida local en la concurrida calle peatonal.", category: "dining" }
     ],
@@ -367,7 +367,7 @@ export const initialItinerary = [
     title: "Regreso a Barcelona",
     transport: {
       type: "flight",
-      details: "Vuelo internacional de vuelta Air China CA571. PEK 02:30 -> BCN 08:15.",
+      details: "Vuelo internacional de vuelta Air China CA571. PEK 11:50 -> BCN 18:20.",
       bookingStatus: "booked"
     },
     lodging: {
@@ -376,11 +376,11 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-15-1", time: "00:00", title: "Check-in en el Aeropuerto de Pekín Capital (PEK)", description: "Llegada al aeropuerto por la noche para tomar el vuelo de la madrugada (02:30).", category: "transit" },
-      { id: "act-15-2", time: "02:30", title: "Salida del vuelo CA571", description: "Vuelo directo operado por Air China con destino Barcelona BCN, durando unas 12 horas.", category: "transit" },
-      { id: "act-15-3", time: "08:15", title: "Aterrizaje en Barcelona-El Prat (BCN)", description: "Llegada a Barcelona por la mañana hora local (diferencia horaria). ¡Fin del gran viaje!", category: "transit" }
+      { id: "act-15-1", time: "08:50", title: "Llegada al Aeropuerto de Pekín (PEK)", description: "Llegar con 3 horas de antelación al Terminal 3 para facturación internacional.", category: "transit" },
+      { id: "act-15-2", time: "11:50", title: "Despegue del vuelo CA571", description: "Vuelo directo operado por Air China hacia Barcelona (BCN) en un Airbus A350. Almuerzo y cena a bordo.", category: "transit" },
+      { id: "act-15-3", time: "18:20", title: "Aterrizaje en Barcelona-El Prat (BCN)", description: "Llegada a Barcelona por la tarde hora local. ¡Fin de la increíble aventura por China!", category: "transit" }
     ],
-    notes: "El vuelo CA571 sale en la madrugada del viernes 31 (02:30 AM), por lo que debes ir al aeropuerto de Pekín durante la noche del jueves 30."
+    notes: "El vuelo CA571 sale a las 11:50 AM del viernes 31. Procura salir del hotel en Pekín sobre las 07:30 - 08:00 AM para ir con tiempo de sobra."
   }
 ];
 

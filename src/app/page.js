@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import DashboardView from "@/components/DashboardView";
 import ItineraryView from "@/components/ItineraryView";
-import ExpenseTracker from "@/components/ExpenseTracker";
 import SurvivalGuide from "@/components/SurvivalGuide";
 import { 
   initialItinerary, initialSurvival, initialExpenses 
@@ -78,6 +77,59 @@ export default function Home() {
     }
   }, []);
 
+  const checkAndPatchItinerary = (rawItinerary) => {
+    if (!Array.isArray(rawItinerary)) return { patched: rawItinerary, didChange: false };
+    let didChange = false;
+    const patched = rawItinerary.map(day => {
+      if (!day) return day;
+      if (day.id === "day-1" && day.transport?.details?.includes("15:30")) {
+        didChange = true;
+        return {
+          ...day,
+          transport: {
+            ...day.transport,
+            details: "Vuelo internacional Air China CA840. BCN 12:10 -> PVG 06:45 (+1)."
+          },
+          activities: (day.activities || []).map(act => {
+            if (act.id === "act-1-1") return { ...act, time: "09:10", description: "Llegar con 3 horas de antelación al terminal T1 para facturar equipaje y pasar control de seguridad." };
+            if (act.id === "act-1-2") return { ...act, time: "12:10" };
+            return act;
+          })
+        };
+      }
+      if (day.id === "day-2" && (day.activities || []).some(act => act.id === "act-2-1" && act.time === "10:30")) {
+        didChange = true;
+        return {
+          ...day,
+          activities: (day.activities || []).map(act => {
+            if (act.id === "act-2-1") return { ...act, time: "06:45" };
+            if (act.id === "act-2-2") return { ...act, time: "10:30", title: "Llegada al Youli Hotel" };
+            return act;
+          })
+        };
+      }
+      if (day.id === "day-15" && day.transport?.details?.includes("02:30")) {
+        didChange = true;
+        return {
+          ...day,
+          transport: {
+            ...day.transport,
+            details: "Vuelo internacional de vuelta Air China CA571. PEK 11:50 -> BCN 18:20."
+          },
+          activities: (day.activities || []).map(act => {
+            if (act.id === "act-15-1") return { ...act, time: "08:50", title: "Llegada al Aeropuerto de Pekín (PEK)", description: "Llegar con 3 horas de antelación al Terminal 3 para facturación internacional." };
+            if (act.id === "act-15-2") return { ...act, time: "11:50", description: "Vuelo directo operado por Air China hacia Barcelona (BCN) en un Airbus A350. Almuerzo y cena a bordo." };
+            if (act.id === "act-15-3") return { ...act, time: "18:20", description: "Llegada a Barcelona por la tarde hora local. ¡Fin de la increíble aventura por China!" };
+            return act;
+          }),
+          notes: "El vuelo CA571 sale a las 11:50 AM del viernes 31. Procura salir del hotel en Pekín sobre las 07:30 - 08:00 AM para ir con tiempo de sobra."
+        };
+      }
+      return day;
+    });
+    return { patched, didChange };
+  };
+
   const loadTripData = async (id) => {
     setLoading(true);
     try {
@@ -85,7 +137,10 @@ export default function Home() {
       const result = await res.json();
       
       if (result.success && result.data) {
-        setItinerary(result.data.itinerary || initialItinerary);
+        const rawItin = result.data.itinerary || initialItinerary;
+        const { patched, didChange } = checkAndPatchItinerary(rawItin);
+        
+        setItinerary(patched);
         setSurvival(result.data.survival || initialSurvival);
         setExpenses(result.data.expenses || initialExpenses);
         setBudget(result.data.budget || 3000);
@@ -93,7 +148,24 @@ export default function Home() {
         setSupabaseConfigured(result.supabaseConfigured !== false);
         
         // Cache in local storage
-        localStorage.setItem(`china_trip_${id}`, JSON.stringify(result.data));
+        localStorage.setItem(`china_trip_${id}`, JSON.stringify({
+          ...result.data,
+          itinerary: patched
+        }));
+
+        if (didChange) {
+          const currentData = {
+            itinerary: patched,
+            survival: result.data.survival || initialSurvival,
+            expenses: result.data.expenses || initialExpenses,
+            budget: result.data.budget || 3000
+          };
+          fetch(`/api/trip?id=${id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(currentData)
+          }).catch(err => console.warn("Silent patch error", err));
+        }
       } else {
         throw new Error(result.error || "Failed to fetch");
       }
@@ -103,7 +175,8 @@ export default function Home() {
       if (cached) {
         try {
           const cachedData = JSON.parse(cached);
-          setItinerary(cachedData.itinerary || initialItinerary);
+          const { patched } = checkAndPatchItinerary(cachedData.itinerary || initialItinerary);
+          setItinerary(patched);
           setSurvival(cachedData.survival || initialSurvival);
           setExpenses(cachedData.expenses || initialExpenses);
           setBudget(cachedData.budget || 3000);
@@ -409,14 +482,6 @@ export default function Home() {
             showFlightModal={showFlightModal}
           />
         )}
-        {activeTab === "expenses" && (
-          <ExpenseTracker 
-            expenses={expenses} 
-            budget={budget}
-            updateExpenses={updateExpenses}
-            updateBudget={updateBudget}
-          />
-        )}
         {activeTab === "survival" && (
           <SurvivalGuide 
             survival={survivalData} 
@@ -484,13 +549,6 @@ export default function Home() {
         >
           <IconCalendar className="w-5 h-5" />
           <span>Itinerario</span>
-        </button>
-        <button 
-          className={`mobile-tab-btn ${activeTab === "expenses" ? "active" : ""}`}
-          onClick={() => setActiveTab("expenses")}
-        >
-          <IconDollar className="w-5 h-5" />
-          <span>Gastos</span>
         </button>
         <button 
           className={`mobile-tab-btn ${activeTab === "survival" ? "active" : ""}`}

@@ -1903,3 +1903,40 @@ input:focus, select:focus, textarea:focus {
   font-size: 0.65rem;
   padding-top: 8px;
 }
+
+/* Highlight Today's Itinerary Day Card */
+.timeline-day-card.today-day {
+  border: 1px solid #eab308 !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.15);
+  border-radius: 12px;
+}
+.timeline-day-card.today-day .timeline-marker {
+  background: var(--gold-gradient) !important;
+  color: #111827 !important;
+  font-weight: bold;
+}
+
+/* Today Badge in Itinerary Timeline */
+.today-badge-itinerary {
+  background: var(--gold-gradient);
+  color: #111827;
+  font-size: 0.55rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin-left: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.1;
+}
+
+/* Expanded Card Header Color differentiation */
+.timeline-day-card.expanded .day-header {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(16, 185, 129, 0.04) 100%) !important;
+  border: 1px solid rgba(37, 99, 235, 0.3) !important;
+}
+.timeline-day-card.expanded.today-day .day-header {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(37, 99, 235, 0.03) 100%) !important;
+  border: 1px solid rgba(234, 179, 8, 0.4) !important;
+}
+

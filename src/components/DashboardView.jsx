@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   IconCalendar, IconMapPin, IconClock, IconCloud, IconBriefcase, 
-  IconCheck, IconVolume, IconPlane, IconTrain, IconHotel, IconCompass, IconInfo
+  IconCheck, IconVolume, IconPlane, IconTrain, IconHotel, IconCompass, IconInfo, IconDollar
 } from "./Icons";
 
 export default function DashboardView({ itinerary, expenses, updateItinerary, showTaxiHelper, showFlightModal }) {
@@ -11,6 +11,29 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
 
   // Emergency Modal / Translate card state
   const [emergencyText, setEmergencyText] = useState(null);
+
+  // Quick Currency Converter States
+  const [exchangeRate] = useState(7.8); // 1 EUR = 7.8 CNY
+  const [calcEur, setCalcEur] = useState("");
+  const [calcCny, setCalcCny] = useState("");
+
+  const handleCalcEurChange = (val) => {
+    setCalcEur(val);
+    if (val === "" || isNaN(val)) {
+      setCalcCny("");
+    } else {
+      setCalcCny((parseFloat(val) * exchangeRate).toFixed(2));
+    }
+  };
+
+  const handleCalcCnyChange = (val) => {
+    setCalcCny(val);
+    if (val === "" || isNaN(val)) {
+      setCalcEur("");
+    } else {
+      setCalcEur((parseFloat(val) / exchangeRate).toFixed(2));
+    }
+  };
 
   // Essentials checklist state
   const [essentials, setEssentials] = useState([
@@ -246,6 +269,40 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
           </div>
         </div>
       )}
+
+      {/* QUICK CONVERTER CARD */}
+      <div className="card glass-panel quick-converter-card" style={{ marginBottom: "14px" }}>
+        <h3 className="card-title" style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.95rem" }}>
+          <IconDollar className="w-5 h-5 text-gold" /> Calculadora de Cambio Rápido
+        </h3>
+        <p className="card-description" style={{ fontSize: "0.75rem", color: "#94a3b8", marginBottom: "8px" }}>Convierte importes al instante entre Euros (€) y Yuanes (¥):</p>
+        <div className="converter-flex" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div className="converter-input-box" style={{ flex: 1 }}>
+            <label style={{ fontSize: "0.7rem", color: "#94a3b8", display: "block", marginBottom: "3px" }}>Euros (€)</label>
+            <input 
+              type="number" 
+              placeholder="0.00"
+              value={calcEur}
+              onChange={(e) => handleCalcEurChange(e.target.value)}
+              style={{ width: "100%", padding: "5px 8px", fontSize: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "4px", color: "#fff" }}
+            />
+          </div>
+          <div className="converter-sign" style={{ fontSize: "1.1rem", color: "#eab308", paddingTop: "10px" }}>⇄</div>
+          <div className="converter-input-box" style={{ flex: 1 }}>
+            <label style={{ fontSize: "0.7rem", color: "#94a3b8", display: "block", marginBottom: "3px" }}>Yuanes (¥)</label>
+            <input 
+              type="number" 
+              placeholder="0.00"
+              value={calcCny}
+              onChange={(e) => handleCalcCnyChange(e.target.value)}
+              style={{ width: "100%", padding: "5px 8px", fontSize: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "4px", color: "#fff" }}
+            />
+          </div>
+        </div>
+        <p className="converter-note" style={{ fontSize: "0.65rem", color: "#94a3b8", marginTop: "6px", textAlign: "center", marginBlockEnd: "0" }}>
+          Tipo de cambio: 1 € = {exchangeRate} ¥
+        </p>
+      </div>
 
       {/* Grid: Stats, Clocks, Weather, Emergency, Essentials */}
       <div className="dashboard-grid">

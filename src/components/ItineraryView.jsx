@@ -231,6 +231,69 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
 
   const cities = ["Todas", ...new Set(safeItinerary.map(d => d?.city || "").filter(c => c && c !== "En tránsito" && c !== "Tu casa"))];
 
+  const hiddenGems = {
+    "Shanghái": [
+      {
+        name: "1933 Old Millfun (1933老场坊)",
+        desc: "Antigua factoría art déco convertida en laberinto creativo de hormigón. Escaleras cruzadas de película.",
+        amap: "https://uri.amap.com/marker?position=121.494793,31.256268&name=1933%E8%80%81%E5%9C%BA%E5%9D%8A"
+      },
+      {
+        name: "Fuxing Park (复兴公园)",
+        desc: "Parque histórico de estilo francés. Excelente por la mañana para ver bailarines locales, caligrafía acuática en el suelo y partidas de mahjong.",
+        amap: "https://uri.amap.com/marker?position=121.472714,31.218525&name=%E5%A4%8D%E5%85%B4%E5%85%AC%E5%9B%AD"
+      }
+    ],
+    "Chongqing": [
+      {
+        name: "Testbed 2 (贰厂文创公园)",
+        desc: "Fábrica de impresión militar reconvertida en zona hipster de cafés y tiendas creativas. Impresionantes vistas sobre el río Jialing.",
+        amap: "https://uri.amap.com/marker?position=106.536098,29.553945&name=%E8%B4%B0%E5%8E%82%E6%96%87%E5%88%9B%E5%85%AC%E5%9B%AD"
+      },
+      {
+        name: "Huangjueping Graffiti Street (黄桷坪涂鸦街)",
+        desc: "1.2 km de edificios pintados con grafitis artísticos gigantes, pequeños cafés de estudiantes y galerías independientes.",
+        amap: "https://uri.amap.com/marker?position=106.516597,29.497555&name=%E9%BB%84%E6%A7%94%E5%9D%AA%E6%B6%82%E9%B8%A6%E8%A1%9F"
+      }
+    ],
+    "Chengdu": [
+      {
+        name: "Teahouse Heming (鹤鸣茶社)",
+        desc: "Tetería centenaria al aire libre en People's Park. Siéntate en sillas tradicionales de bambú y pide té verde en hebras.",
+        amap: "https://uri.amap.com/marker?position=104.05602,30.655883&name=%E9%B5%A4%E9%B8%A5%E8%8C%B6%E7%A4%BE"
+      },
+      {
+        name: "Dongjiao Memory (东郊记忆)",
+        desc: "Antigua planta electrónica soviética reconvertida en una inmensa zona indie de música, arte urbano y reliquias industriales.",
+        amap: "https://uri.amap.com/marker?position=104.125091,30.672901&name=%E4%B8%9C%E9%83%8A%E8%AE%B0%E5%BF%86"
+      }
+    ],
+    "Xi'an": [
+      {
+        name: "Templo Guangren (广仁寺)",
+        desc: "El único templo budista tibetano en la provincia de Shaanxi. Muralla preciosa iluminada por las noches y molinillos de oración.",
+        amap: "https://uri.amap.com/marker?position=108.924846,34.275811&name=%E5%B9%BF%E4%BB%81%E5%AF%BA"
+      },
+      {
+        name: "Calle Defuxiang (德福巷)",
+        desc: "Calle peatonal empedrada famosa por sus tradicionales casas de té de madera, acogedoras cafeterías y pubs de música acústica.",
+        amap: "https://uri.amap.com/marker?position=108.940989,34.25801&name=%E5%BE%B7%E7%A6%8F%E5%B7%B7"
+      }
+    ],
+    "Pekín": [
+      {
+        name: "Wudaoying Hutong (五道营胡同)",
+        desc: "Callejón tradicional tradicional mucho menos aglomerado que Nanluoguxiang. Lleno de cafés de especialidad, gatos y boutiques de diseño.",
+        amap: "https://uri.amap.com/marker?position=116.411682,39.946399&name=%E4%BA%94%E9%81%93%E8%90%A5%E8%83%A1%E5%90%8C"
+      },
+      {
+        name: "Distrito de Arte 798 (798艺术区)",
+        desc: "Fábricas de la época germano-oriental reconvertidas en el mayor distrito artístico de Pekín, con galerías modernas, cafeterías y grafitis.",
+        amap: "https://uri.amap.com/marker?position=116.495089,39.988012&name=798%E8%89%BA%E6%9C%AF%E5%8C%BA"
+      }
+    ]
+  };
+
   const toggleDayExpanded = (dayId) => {
     setExpandedDays(prev => ({
       ...prev,
@@ -364,6 +427,34 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
         </button>
       </div>
 
+      {/* Hidden Gems Dynamic Widget */}
+      {selectedCity !== "Todas" && hiddenGems[selectedCity] && (
+        <div className="hidden-gems-card glass-panel" style={{ marginBottom: "14px", padding: "12px", border: "1px dashed rgba(234, 179, 8, 0.4)", borderRadius: "14px" }}>
+          <h4 style={{ margin: "0 0 8px 0", fontSize: "0.85rem", color: "#eab308", display: "flex", alignItems: "center", gap: "6px" }}>
+            💎 Joyas Ocultas en {selectedCity}
+          </h4>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {hiddenGems[selectedCity].map(gem => (
+              <div key={gem.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", background: "rgba(255,255,255,0.03)", padding: "8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.02)" }}>
+                <div style={{ flex: 1 }}>
+                  <h5 style={{ margin: "0 0 3px 0", fontSize: "0.75rem", color: "#fff", fontWeight: "bold" }}>{gem.name}</h5>
+                  <p style={{ margin: "0", fontSize: "0.65rem", color: "#94a3b8", lineHeight: "1.3" }}>{gem.desc}</p>
+                </div>
+                <a 
+                  href={gem.amap} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn-primary btn-sm"
+                  style={{ background: "#10b981", fontSize: "0.6rem", padding: "4px 8px", borderRadius: "4px", textDecoration: "none", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "2px", fontWeight: "bold" }}
+                >
+                  🗺️ Mapa Gaode
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Timeline List */}
       <div className="timeline-wrapper">
         <div className="timeline-line"></div>
@@ -371,9 +462,10 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
         {filteredItinerary.map((day, index) => {
           if (!day) return null;
           const isExpanded = !!expandedDays[day.id];
+          const isToday = day.date === new Date().toISOString().split("T")[0];
           
           return (
-            <div key={day.id} className={`timeline-day-card ${isExpanded ? "expanded" : ""}`}>
+            <div key={day.id} className={`timeline-day-card ${isExpanded ? "expanded" : ""} ${isToday ? "today-day" : ""}`}>
               {/* Timeline marker */}
               <div className="timeline-marker">
                 <span className="day-number">{index + 1}</span>
@@ -383,7 +475,10 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
               <div className="day-header glass-panel" onClick={() => toggleDayExpanded(day.id)}>
                 <div className="day-header-main">
                   <div className="day-header-dates">
-                    <span className="day-date">{formatDateDisplay(day.date)}</span>
+                    <span className="day-date" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      {formatDateDisplay(day.date)}
+                      {isToday && <span className="today-badge-itinerary">HOY</span>}
+                    </span>
                     <span className="day-week">{day.dayOfWeek}</span>
                   </div>
                   <div className="day-header-info">
