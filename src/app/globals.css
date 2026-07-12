@@ -61,7 +61,25 @@ body {
   border-radius: 2px;
 }
 
+
+/* Icon Sizing Utilities */
+.w-3 { width: 12px !important; }
+.h-3 { height: 12px !important; }
+.w-3\.5 { width: 14px !important; }
+.h-3\.5 { height: 14px !important; }
+.w-4 { width: 16px !important; }
+.h-4 { height: 16px !important; }
+.w-4\.5 { width: 18px !important; }
+.h-4\.5 { height: 18px !important; }
+.w-5 { width: 20px !important; }
+.h-5 { height: 20px !important; }
+.w-6 { width: 24px !important; }
+.h-6 { height: 24px !important; }
+.w-8 { width: 32px !important; }
+.h-8 { height: 32px !important; }
+
 /* Centered Mobile App Shell (for Desktop view) */
+
 .app-layout {
   max-width: 480px;
   margin: 16px auto;
