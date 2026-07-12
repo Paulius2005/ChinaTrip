@@ -35,6 +35,7 @@ export async function GET(request) {
         return NextResponse.json({
           success: true,
           synced: true,
+          supabaseConfigured: true,
           data: data.data
         });
       }
@@ -42,7 +43,8 @@ export async function GET(request) {
 
     return NextResponse.json({
       success: true,
-      synced: isSupabaseConfigured(),
+      synced: true,
+      supabaseConfigured: isSupabaseConfigured(),
       data: defaultData,
       notice: isSupabaseConfigured() ? "New trip initialized on Supabase" : "Running on local mock data"
     });
@@ -51,6 +53,7 @@ export async function GET(request) {
     return NextResponse.json({
       success: false,
       synced: false,
+      supabaseConfigured: isSupabaseConfigured(),
       error: error.message,
       data: defaultData
     });
@@ -79,13 +82,15 @@ export async function POST(request) {
 
       return NextResponse.json({
         success: true,
-        synced: true
+        synced: true,
+        supabaseConfigured: true
       });
     }
 
     return NextResponse.json({
       success: true,
-      synced: false,
+      synced: true,
+      supabaseConfigured: false,
       notice: "Supabase not configured. Saved locally."
     });
   } catch (error) {
@@ -93,6 +98,7 @@ export async function POST(request) {
     return NextResponse.json({
       success: false,
       synced: false,
+      supabaseConfigured: isSupabaseConfigured(),
       error: error.message
     }, { status: 500 });
   }

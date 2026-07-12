@@ -31,6 +31,7 @@ export default function Home() {
   const [inputTripId, setInputTripId] = useState("");
   const [isOffline, setIsOffline] = useState(false);
   const [pendingSync, setPendingSync] = useState(false);
+  const [supabaseConfigured, setSupabaseConfigured] = useState(true);
 
   // Taxi Helper State
   const [taxiHotel, setTaxiHotel] = useState(null);
@@ -89,6 +90,7 @@ export default function Home() {
         setExpenses(result.data.expenses || initialExpenses);
         setBudget(result.data.budget || 3000);
         setSynced(result.synced);
+        setSupabaseConfigured(result.supabaseConfigured !== false);
         
         // Cache in local storage
         localStorage.setItem(`china_trip_${id}`, JSON.stringify(result.data));
@@ -110,6 +112,7 @@ export default function Home() {
         }
       }
       setSynced(false);
+      setSupabaseConfigured(false);
     } finally {
       setLoading(false);
     }
@@ -130,12 +133,14 @@ export default function Home() {
       });
       const result = await res.json();
       setSynced(result.synced);
+      setSupabaseConfigured(result.supabaseConfigured !== false);
       if (result.synced) {
         setPendingSync(false);
       }
     } catch (error) {
       console.error("Failed to sync to database:", error);
       setSynced(false);
+      setSupabaseConfigured(false);
       setPendingSync(true);
     } finally {
       setSaving(false);
@@ -175,9 +180,11 @@ export default function Home() {
         const result = await res.json();
         setSynced(result.synced);
         setPendingSync(!result.synced);
+        setSupabaseConfigured(result.supabaseConfigured !== false);
       } catch (error) {
         console.error("Failed to sync to database:", error);
         setSynced(false);
+        setSupabaseConfigured(false);
         setPendingSync(true);
       } finally {
         setSaving(false);
@@ -338,6 +345,10 @@ export default function Home() {
             <span className="header-status">
               {isOffline ? (
                 <span className="status-indicator offline">● Modo Offline (Guardando Local)</span>
+              ) : !supabaseConfigured ? (
+                <span className="status-indicator synced" style={{ color: "#10b981", cursor: "default" }}>
+                  ● Guardado en Dispositivo (Local)
+                </span>
               ) : synced ? (
                 <span className="status-indicator synced">● Nube Sincronizada ({tripId})</span>
               ) : (
