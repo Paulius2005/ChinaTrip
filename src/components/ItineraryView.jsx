@@ -13,7 +13,210 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
   const [editingDay, setEditingDay] = useState(null); // Day object being edited
   const [addingActivityToDayId, setAddingActivityToDayId] = useState(null); // Day ID
   const [newActivity, setNewActivity] = useState({ time: "09:00", title: "", description: "", category: "sightseeing" });
-  
+
+  // Trip.com Import Modal State
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importType, setImportType] = useState("hotel"); // hotel | flight
+  const [rawImportText, setRawImportText] = useState("");
+  const [parsedData, setParsedData] = useState({ name: "", nameChinese: "", address: "", addressChinese: "", checkIn: "2026-07-18", checkOut: "2026-07-20", phone: "" });
+
+  const handleTabChange = (type) => {
+    setImportType(type);
+    setRawImportText("");
+    if (type === "hotel") {
+      setParsedData({ name: "", nameChinese: "", address: "", addressChinese: "", checkIn: "2026-07-18", checkOut: "2026-07-20", phone: "" });
+    } else {
+      setParsedData({ flightNo: "", date: "2026-07-17", details: "" });
+    }
+  };
+
+  const handleTextareaChange = (textVal) => {
+    setRawImportText(textVal);
+    if (!textVal.trim()) return;
+    const result = parsePastedText(textVal, importType);
+    setParsedData(result);
+  };
+
+  const parsePastedText = (text, type) => {
+    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+    
+    const extractDate = (line) => {
+      const isoMatch = line.match(/(\d{4})[-/](\d{2})[-/](\d{2})/);
+      if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+      
+      const spanishMatch = line.match(/(\d{1,2})\s+(de\s+)?(ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*/i);
+      if (spanishMatch) {
+        const day = spanishMatch[1].padStart(2, "0");
+        const months = {
+          ene: "01", feb: "02", mar: "03", abr: "04", may: "05", jun: "06",
+          jul: "07", ago: "08", sep: "09", oct: "10", nov: "11", dic: "12"
+        };
+        const monthAbbr = spanishMatch[3].toLowerCase();
+        const monthNum = months[monthAbbr] || "07";
+        return `2026-${monthNum}-${day}`;
+      }
+      return "";
+    };
+
+    if (type === "hotel") {
+      let hotelData = {
+        name: "",
+        nameChinese: "",
+        address: "",
+        addressChinese: "",
+        checkIn: "2026-07-18",
+        checkOut: "2026-07-20",
+        phone: ""
+      };
+
+      for (const line of lines) {
+        if (line.includes("+86") || line.includes("+34") || line.toLowerCase().includes("tel") || line.toLowerCase().includes("phone") || line.includes("电话")) {
+          const phoneMatch = line.match(/\+?\d[\d-\s()]{7,}\d/);
+          if (phoneMatch) hotelData.phone = phoneMatch[0];
+        }
+
+        if (line.toLowerCase().includes("check-in") || line.toLowerCase().includes("entrada") || line.toLowerCase().includes("llegada") || line.includes("入住")) {
+          const dateStr = extractDate(line);
+          if (dateStr) hotelData.checkIn = dateStr;
+        }
+
+        if (line.toLowerCase().includes("check-out") || line.toLowerCase().includes("salida") || line.includes("退房")) {
+          const dateStr = extractDate(line);
+          if (dateStr) hotelData.checkOut = dateStr;
+        }
+
+        const lowercaseLine = line.toLowerCase();
+        if ((lowercaseLine.includes("hotel") || lowercaseLine.includes("viewing") || lowercaseLine.includes("branch") || lowercaseLine.includes("hostel")) && !hotelData.name && !line.includes(":") && !line.includes("@")) {
+          hotelData.name = line;
+        }
+      }
+
+      const chineseBlocks = text.match(/[\u4e00-\u9fa5]{4,}/g) || [];
+      if (chineseBlocks.length > 0) {
+        const nameBlock = chineseBlocks.find(b => b.includes("店") || b.includes("酒") || b.length < 25);
+        if (nameBlock) hotelData.nameChinese = nameBlock;
+        
+        const addressBlock = chineseBlocks.find(b => b.includes("路") || b.includes("街") || b.includes("区") || b.includes("省") || b.length >= 15);
+        if (addressBlock) hotelData.addressChinese = addressBlock;
+      }
+
+      const addressKeywords = ["road", "street", "st", "rd", "district", "building", "floor", "no."];
+      for (const line of lines) {
+        if (addressKeywords.some(kw => line.toLowerCase().includes(kw)) && !line.includes("+") && !line.includes("@") && line !== hotelData.name) {
+          hotelData.address = line;
+          break;
+        }
+      }
+
+      if (!hotelData.name && lines.length > 0) {
+        hotelData.name = lines[0].slice(0, 80);
+      }
+
+      return hotelData;
+    } else {
+      let flightData = {
+        flightNo: "",
+        date: "2026-07-17",
+        details: ""
+      };
+
+      const flightMatch = text.match(/(CA\d+|3U\d+|MU\d+|CZ\d+|FM\d+|G\d{3,4}|D\d{3,4})/i);
+      if (flightMatch) flightData.flightNo = flightMatch[0].toUpperCase();
+
+      for (const line of lines) {
+        const dateStr = extractDate(line);
+        if (dateStr) {
+          flightData.date = dateStr;
+          break;
+        }
+      }
+
+      const routeKeywords = ["bcn", "pvg", "pek", "sha", "ckg", "t1", "t2", "t3", "terminal", "aeropuerto", "estación", "station", "airport"];
+      const matchingLines = lines.filter(line => routeKeywords.some(kw => line.toLowerCase().includes(kw)));
+      if (matchingLines.length > 0) {
+        flightData.details = matchingLines.slice(0, 2).join(" | ");
+      } else {
+        flightData.details = lines.slice(0, 2).join(" | ");
+      }
+
+      return flightData;
+    }
+  };
+
+  const handleConfirmImport = () => {
+    if (importType === "hotel") {
+      if (!parsedData.name || !parsedData.checkIn || !parsedData.checkOut) {
+        alert("Por favor, asegúrate de rellenar el nombre del hotel y las fechas.");
+        return;
+      }
+      
+      const checkInDate = new Date(parsedData.checkIn);
+      const checkOutDate = new Date(parsedData.checkOut);
+      
+      if (checkInDate >= checkOutDate) {
+        alert("La fecha de salida debe ser posterior a la de entrada.");
+        return;
+      }
+      
+      const updated = safeItinerary.map(day => {
+        const dayDate = new Date(day.date);
+        dayDate.setHours(0,0,0,0);
+        const compareIn = new Date(parsedData.checkIn);
+        compareIn.setHours(0,0,0,0);
+        const compareOut = new Date(parsedData.checkOut);
+        compareOut.setHours(0,0,0,0);
+        
+        if (dayDate >= compareIn && dayDate < compareOut) {
+          return {
+            ...day,
+            lodging: {
+              name: parsedData.name,
+              nameChinese: parsedData.nameChinese || "",
+              address: parsedData.address || "",
+              addressChinese: parsedData.addressChinese || "",
+              bookingStatus: "booked"
+            }
+          };
+        }
+        return day;
+      });
+      
+      updateItinerary(updated);
+      alert(`¡Hotel "${parsedData.name}" importado con éxito para tu estancia!`);
+    } else {
+      if (!parsedData.flightNo || !parsedData.date) {
+        alert("Por favor, introduce el número de vuelo/tren y la fecha.");
+        return;
+      }
+      
+      let foundDay = false;
+      const updated = safeItinerary.map(day => {
+        if (day.date === parsedData.date) {
+          foundDay = true;
+          return {
+            ...day,
+            transport: {
+              type: parsedData.flightNo.match(/^(G|D)\d+/i) ? "train" : "flight",
+              details: `Vuelo/Tren ${parsedData.flightNo}. ${parsedData.details}`,
+              bookingStatus: "booked"
+            }
+          };
+        }
+        return day;
+      });
+      
+      if (!foundDay) {
+        alert(`No se encontró ningún día en tu itinerario que coincida con la fecha ${parsedData.date}.`);
+        return;
+      }
+      
+      updateItinerary(updated);
+      alert(`¡Transporte ${parsedData.flightNo} importado con éxito!`);
+    }
+    
+    setIsImportModalOpen(false);
+  };
+
   const safeItinerary = Array.isArray(itinerary) ? itinerary : [];
 
   const formatDateDisplay = (dateStr) => {
@@ -131,20 +334,34 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
 
   return (
     <div className="itinerary-container">
-      {/* City Filters */}
-      <div className="filters-row glass-panel">
-        <span className="filters-label">Filtrar por ciudad:</span>
-        <div className="filters-list">
-          {cities.map(city => (
-            <button 
-              key={city}
-              className={`filter-btn ${selectedCity === city ? "active" : ""}`}
-              onClick={() => setSelectedCity(city)}
-            >
-              {city}
-            </button>
-          ))}
+      {/* City Filters & Import Action */}
+      <div className="filters-row glass-panel" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", padding: "8px 10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+          <span className="filters-label">Filtrar:</span>
+          <div className="filters-list">
+            {cities.map(city => (
+              <button 
+                key={city}
+                className={`filter-btn ${selectedCity === city ? "active" : ""}`}
+                onClick={() => setSelectedCity(city)}
+              >
+                {city}
+              </button>
+            ))}
+          </div>
         </div>
+        <button 
+          type="button" 
+          className="btn-primary btn-sm"
+          style={{ background: "#2563eb", display: "flex", alignItems: "center", gap: "4px", padding: "4px 8px", fontSize: "0.7rem" }}
+          onClick={() => {
+            setRawImportText("");
+            setParsedData({ name: "", nameChinese: "", address: "", addressChinese: "", checkIn: "2026-07-18", checkOut: "2026-07-20", phone: "" });
+            setIsImportModalOpen(true);
+          }}
+        >
+          📥 Importar
+        </button>
       </div>
 
       {/* Timeline List */}
@@ -552,6 +769,155 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
                 <button type="submit" className="btn-primary">Guardar Cambios</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Trip.com Import Modal */}
+      {isImportModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsImportModalOpen(false)}>
+          <div className="modal-content glass-panel" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "440px", padding: "14px" }}>
+            <h3 style={{ margin: "0 0 10px 0", fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "6px" }}>
+              📥 Importador de Reservas
+            </h3>
+            
+            {/* Modal Tabs */}
+            <div style={{ display: "flex", gap: "4px", marginBottom: "10px", background: "rgba(0,0,0,0.25)", padding: "3px", borderRadius: "6px" }}>
+              <button 
+                type="button"
+                className={`w-full text-center ${importType === "hotel" ? "bg-blue text-white" : "bg-transparent text-muted"}`}
+                style={{ padding: "4px 8px", fontSize: "0.75rem", borderRadius: "4px", border: "none" }}
+                onClick={() => handleTabChange("hotel")}
+              >
+                Alojamiento (Hotel)
+              </button>
+              <button 
+                type="button"
+                className={`w-full text-center ${importType === "flight" ? "bg-blue text-white" : "bg-transparent text-muted"}`}
+                style={{ padding: "4px 8px", fontSize: "0.75rem", borderRadius: "4px", border: "none" }}
+                onClick={() => handleTabChange("flight")}
+              >
+                Vuelo / Tren
+              </button>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: "10px" }}>
+              <label style={{ fontSize: "0.7rem", color: "#94a3b8" }}>Pega el texto copiado de Trip.com:</label>
+              <textarea 
+                placeholder={importType === "hotel" ? "Ej: Hotel: TheMoss Hotel\nCheck-in: 2026-07-20..." : "Ej: Flight: CA840\nDate: 2026-07-17..."}
+                value={rawImportText}
+                onChange={(e) => handleTextareaChange(e.target.value)}
+                style={{ height: "60px", fontSize: "0.7rem", background: "rgba(0,0,0,0.3)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "4px", padding: "6px", width: "100%" }}
+              />
+            </div>
+
+            <div style={{ background: "rgba(0,0,0,0.15)", padding: "8px 10px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.05)", marginBottom: "12px" }}>
+              <h5 style={{ fontSize: "0.7rem", color: "#eab308", margin: "0 0 6px 0" }}>⚡ Campos autodetectados (puedes editarlos):</h5>
+              
+              {importType === "hotel" ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <label>Nombre del Hotel</label>
+                      <input 
+                        type="text" 
+                        value={parsedData.name || ""} 
+                        onChange={(e) => setParsedData({ ...parsedData, name: e.target.value })}
+                        style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Nombre en Chino</label>
+                      <input 
+                        type="text" 
+                        value={parsedData.nameChinese || ""} 
+                        onChange={(e) => setParsedData({ ...parsedData, nameChinese: e.target.value })}
+                        style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <label>Entrada (Check-in)</label>
+                      <input 
+                        type="date" 
+                        value={parsedData.checkIn || ""} 
+                        onChange={(e) => setParsedData({ ...parsedData, checkIn: e.target.value })}
+                        style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Salida (Check-out)</label>
+                      <input 
+                        type="date" 
+                        value={parsedData.checkOut || ""} 
+                        onChange={(e) => setParsedData({ ...parsedData, checkOut: e.target.value })}
+                        style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Dirección en Inglés</label>
+                    <input 
+                      type="text" 
+                      value={parsedData.address || ""} 
+                      onChange={(e) => setParsedData({ ...parsedData, address: e.target.value })}
+                      style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Dirección en Chino</label>
+                    <input 
+                      type="text" 
+                      value={parsedData.addressChinese || ""} 
+                      onChange={(e) => setParsedData({ ...parsedData, addressChinese: e.target.value })}
+                      style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <label>Vuelo / Tren #</label>
+                      <input 
+                        type="text" 
+                        value={parsedData.flightNo || ""} 
+                        onChange={(e) => setParsedData({ ...parsedData, flightNo: e.target.value })}
+                        style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Fecha</label>
+                      <input 
+                        type="date" 
+                        value={parsedData.date || ""} 
+                        onChange={(e) => setParsedData({ ...parsedData, date: e.target.value })}
+                        style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Detalles / Ruta</label>
+                    <input 
+                      type="text" 
+                      value={parsedData.details || ""} 
+                      onChange={(e) => setParsedData({ ...parsedData, details: e.target.value })}
+                      style={{ padding: "4px 6px", fontSize: "0.75rem" }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="modal-actions" style={{ marginTop: "10px" }}>
+              <button type="button" className="btn-secondary btn-sm" onClick={() => setIsImportModalOpen(false)}>Cancelar</button>
+              <button type="button" className="btn-primary btn-sm" onClick={handleConfirmImport}>Confirmar e Importar</button>
+            </div>
           </div>
         </div>
       )}
