@@ -1,55 +1,58 @@
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import { supabase } from "@/lib/supabase";
 import { initialItinerary, initialPacking, initialSurvival, initialExpenses } from "@/data/initialData";
 
-const isKvConfigured = () => {
-  return !!(process.env.KV_REST_API_URL || process.env.KV_URL);
+const isSupabaseConfigured = () => {
+  return !!supabase;
 };
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const tripId = searchParams.get("id") || "default";
 
+  // Default template data if not found in database or DB not configured
+  const defaultData = {
+    itinerary: initialItinerary,
+    packing: initialPacking,
+    survival: initialSurvival,
+    expenses: initialExpenses,
+    budget: 3000 // default budget in EUR
+  };
+
   try {
-    if (isKvConfigured()) {
-      const data = await kv.get(`trip:${tripId}`);
-      if (data) {
+    if (isSupabaseConfigured()) {
+      const { data, error } = await supabase
+        .from("trips")
+        .select("data")
+        .eq("id", tripId)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      if (data && data.data) {
         return NextResponse.json({
           success: true,
           synced: true,
-          data
+          data: data.data
         });
       }
     }
 
-    // Default template data if not found in database or DB not configured
-    const defaultData = {
-      itinerary: initialItinerary,
-      packing: initialPacking,
-      survival: initialSurvival,
-      expenses: initialExpenses,
-      budget: 3000 // default budget in EUR
-    };
-
     return NextResponse.json({
       success: true,
-      synced: isKvConfigured(),
+      synced: isSupabaseConfigured(),
       data: defaultData,
-      notice: isKvConfigured() ? "New trip initialized" : "Running on local mock data"
+      notice: isSupabaseConfigured() ? "New trip initialized on Supabase" : "Running on local mock data"
     });
   } catch (error) {
-    console.error("Database fetch error:", error);
+    console.error("Supabase fetch error:", error);
     return NextResponse.json({
       success: false,
       synced: false,
       error: error.message,
-      data: {
-        itinerary: initialItinerary,
-        packing: initialPacking,
-        survival: initialSurvival,
-        expenses: initialExpenses,
-        budget: 3000
-      }
+      data: defaultData
     });
   }
 }
@@ -61,8 +64,19 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    if (isKvConfigured()) {
-      await kv.set(`trip:${tripId}`, body);
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase
+        .from("trips")
+        .upsert({
+          id: tripId,
+          data: body,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        throw error;
+      }
+
       return NextResponse.json({
         success: true,
         synced: true
@@ -72,10 +86,10 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       synced: false,
-      notice: "Database not configured. Saved locally."
+      notice: "Supabase not configured. Saved locally."
     });
   } catch (error) {
-    console.error("Database save error:", error);
+    console.error("Supabase save error:", error);
     return NextResponse.json({
       success: false,
       synced: false,
