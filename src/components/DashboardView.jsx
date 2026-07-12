@@ -304,51 +304,11 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
         </p>
       </div>
 
-      {/* Grid: Stats, Clocks, Weather, Emergency, Essentials */}
+      {/* Grid: Clocks & Essentials */}
       <div className="dashboard-grid">
         
-        {/* Left Column: Stats & Clocks & Emergency */}
+        {/* Left Column: Clocks */}
         <div className="dashboard-col">
-          {/* Stats Card */}
-          <div className="card glass-panel">
-            <h2 className="card-title">
-              <IconBriefcase className="w-5 h-5 text-red" /> Resumen del Viaje
-            </h2>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-label">Duración</span>
-                <span className="stat-val">{totalDays} días</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Ciudades</span>
-                <span className="stat-val">{uniqueCities.length}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Vuelos</span>
-                <span className="stat-val">{flights}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Trenes Bala</span>
-                <span className="stat-val">{trains}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Hoteles</span>
-                <span className="stat-val">{bookedHotels} res.</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Coste Estimado</span>
-                <span className="stat-val">{totalExpenses.toFixed(0)} €</span>
-              </div>
-            </div>
-            <div className="cities-badge-list">
-              {uniqueCities.map(city => (
-                <span key={city} className="city-pill">
-                  <IconMapPin className="w-3.5 h-3.5" /> {city}
-                </span>
-              ))}
-            </div>
-          </div>
-
           {/* Clocks Card */}
           <div className="card glass-panel clock-card">
             <h2 className="card-title">
@@ -367,60 +327,9 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
               </div>
             </div>
           </div>
-
-          {/* Emergency Card (UX Feature) */}
-          <div className="card glass-panel emergency-card">
-            <h2 className="card-title text-red">
-              🚨 Teléfonos de Emergencia y Ayuda
-            </h2>
-            <div className="emergency-numbers-grid">
-              <a href="tel:110" className="emg-call-btn">
-                <span className="emg-num">110</span>
-                <span className="emg-lbl">Policía</span>
-              </a>
-              <a href="tel:120" className="emg-call-btn">
-                <span className="emg-num">120</span>
-                <span className="emg-lbl">Ambulancia</span>
-              </a>
-              <a href="tel:119" className="emg-call-btn">
-                <span className="emg-num">119</span>
-                <span className="emg-lbl">Bomberos</span>
-              </a>
-            </div>
-
-            <div className="consular-info-box">
-              <h5>Consulado General de España en Shanghái</h5>
-              <p>📍 12F, 390 Fuzhou Rd, Huangpu, Shanghai</p>
-              <p>📞 Teléfono de Emergencia Consular: <a href="tel:+8613917477111">+86 139 1747 7111</a></p>
-            </div>
-
-            <div className="emergency-translations-section">
-              <h5>💬 Traducciones Médicas / Auxilio Rápido:</h5>
-              <div className="emg-phrases-list">
-                {emergencyPhrases.map(phrase => (
-                  <div 
-                    key={phrase.esp} 
-                    className="emg-phrase-row"
-                    onClick={() => {
-                      setEmergencyText(phrase);
-                      handleSpeak(phrase.hanzi);
-                    }}
-                    title="Pulsa para agrandar y pronunciar en voz alta"
-                  >
-                    <div className="emg-phrase-meanings">
-                      <span className="emg-phrase-esp">{phrase.esp}</span>
-                      <span className="emg-phrase-hanzi">{phrase.hanzi}</span>
-                    </div>
-                    <button type="button" className="emg-speak-btn">🔊</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
         </div>
 
-        {/* Right Column: Essentials Checklist & Weather */}
+        {/* Right Column: Essentials */}
         <div className="dashboard-col">
           {/* Essentials Checklist */}
           <div className="card glass-panel">
@@ -442,24 +351,6 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Weather Card */}
-          <div className="card glass-panel">
-            <h2 className="card-title">
-              <IconCloud className="w-5 h-5 text-blue" /> Clima en Julio
-            </h2>
-            <div className="weather-list">
-              {weatherGuides.map(item => (
-                <div key={item.city} className="weather-item">
-                  <div className="weather-city-info">
-                    <span className="weather-city">{item.city}</span>
-                    <span className="weather-desc">{item.desc}</span>
-                  </div>
-                  <span className="weather-temp">{item.temp}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 

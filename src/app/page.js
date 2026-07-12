@@ -4,12 +4,13 @@ import React, { useState, useEffect } from "react";
 import DashboardView from "@/components/DashboardView";
 import ItineraryView from "@/components/ItineraryView";
 import SurvivalGuide from "@/components/SurvivalGuide";
+import WeatherView from "@/components/WeatherView";
 import { 
   initialItinerary, initialSurvival, initialExpenses 
 } from "@/data/initialData";
 import { 
   IconCalendar, IconDollar, IconBookOpen, IconCompass, 
-  IconShare, IconLock, IconCheck, IconInfo, IconClock, IconVolume, IconPlane
+  IconShare, IconLock, IconCheck, IconInfo, IconClock, IconVolume, IconPlane, IconCloud
 } from "@/components/Icons";
 
 export default function Home() {
@@ -482,6 +483,9 @@ export default function Home() {
             showFlightModal={showFlightModal}
           />
         )}
+        {activeTab === "weather" && (
+          <WeatherView />
+        )}
         {activeTab === "survival" && (
           <SurvivalGuide 
             survival={survivalData} 
@@ -492,31 +496,9 @@ export default function Home() {
 
       {/* Footer & Settings */}
       <footer className="app-footer glass-panel">
-        <div className="footer-flex">
-          {/* Trip Share Link */}
-          <div className="footer-share-section">
-            <span className="footer-label">
-              <IconShare className="w-4 h-4 inline-block text-gold mr-1" /> Compartir viaje:
-            </span>
-            <div className="share-link-group">
-              <input 
-                type="text" 
-                readOnly 
-                value={getShareUrl()} 
-                onClick={(e) => e.target.select()}
-              />
-              <button 
-                className={`btn-primary btn-sm ${shareCopied ? "copied" : ""}`}
-                onClick={handleCopyShare}
-              >
-                {shareCopied ? "¡Copiado!" : "Copiar Enlace"}
-              </button>
-            </div>
-            <p className="share-desc">Cualquiera con este enlace compartirá vuestro plan y gastos en tiempo real.</p>
-          </div>
-
+        <div className="footer-flex" style={{ justifyContent: "center" }}>
           {/* Database Trip ID selector */}
-          <div className="footer-trip-id-section">
+          <div className="footer-trip-id-section" style={{ width: "100%", maxWidth: "340px" }}>
             <span className="footer-label">
               <IconLock className="w-4 h-4 inline-block text-red mr-1" /> Cargar otro código de viaje:
             </span>
@@ -549,6 +531,13 @@ export default function Home() {
         >
           <IconCalendar className="w-5 h-5" />
           <span>Itinerario</span>
+        </button>
+        <button 
+          className={`mobile-tab-btn ${activeTab === "weather" ? "active" : ""}`}
+          onClick={() => setActiveTab("weather")}
+        >
+          <IconCloud className="w-5 h-5" />
+          <span>Clima</span>
         </button>
         <button 
           className={`mobile-tab-btn ${activeTab === "survival" ? "active" : ""}`}
