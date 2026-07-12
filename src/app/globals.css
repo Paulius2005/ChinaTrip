@@ -1963,7 +1963,7 @@ input:focus, select:focus, textarea:focus {
   padding: 6px 12px;
   font-size: 0.75rem;
   font-weight: bold;
-  color: #94a3b8;
+  color: #e2e8f0;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
@@ -1972,7 +1972,7 @@ input:focus, select:focus, textarea:focus {
   transition: all 0.2s ease;
 }
 .city-tab-btn.active {
-  color: #111827;
+  color: #111827 !important;
   background: var(--gold-gradient);
   border-color: transparent;
   box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
@@ -2015,7 +2015,7 @@ input:focus, select:focus, textarea:focus {
 }
 .weather-detail-label {
   font-size: 0.6rem;
-  color: #94a3b8;
+  color: #cbd5e1;
   margin-bottom: 2px;
 }
 .weather-detail-val {
@@ -2053,12 +2053,12 @@ input:focus, select:focus, textarea:focus {
 }
 .forecast-day {
   font-size: 0.65rem;
-  color: #94a3b8;
+  color: #ffffff !important;
   font-weight: bold;
 }
 .forecast-date {
   font-size: 0.55rem;
-  color: #64748b;
+  color: #cbd5e1 !important;
 }
 .forecast-icon {
   font-size: 1.3rem;

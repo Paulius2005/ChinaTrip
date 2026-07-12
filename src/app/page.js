@@ -38,7 +38,10 @@ export default function Home() {
   const [highContrast, setHighContrast] = useState(true);
 
   // Flight Tracker State
-  const [activeFlight, setActiveFlight] = useState(null); // flight object or code
+  const [activeFlight, setActiveFlight] = useState(null);
+  const [searchFlightQuery, setSearchFlightQuery] = useState("");
+  const [flightLoading, setFlightLoading] = useState(false);
+  const [flightError, setFlightError] = useState(null);
 
   // Monitor network connectivity
   useEffect(() => {
@@ -302,78 +305,30 @@ export default function Home() {
     setTaxiHotel(lodging);
   };
 
-  // Flight Tracker details database
-  const flightDatabase = {
-    CA840: {
-      number: "CA840",
-      airline: "Air China",
-      origin: "Barcelona",
-      originCode: "BCN",
-      originTerminal: "T1",
-      destination: "Shanghái Pudong",
-      destinationCode: "PVG",
-      destinationTerminal: "T2",
-      scheduleDep: "15:30",
-      scheduleArr: "10:30 (+1)",
-      duration: "12h 35m",
-      aircraft: "Airbus A350-900",
-      flightradarUrl: "https://www.flightradar24.com/data/flights/ca840",
-      flightawareUrl: "https://flightaware.com/live/flight/CCA840",
-      logo: "✈️"
-    },
-    CA571: {
-      number: "CA571",
-      airline: "Air China",
-      origin: "Pekín Capital",
-      originCode: "PEK",
-      originTerminal: "T3",
-      destination: "Barcelona",
-      destinationCode: "BCN",
-      destinationTerminal: "T1",
-      scheduleDep: "02:30",
-      scheduleArr: "08:15",
-      duration: "11h 45m",
-      aircraft: "Airbus A350-900",
-      flightradarUrl: "https://www.flightradar24.com/data/flights/ca571",
-      flightawareUrl: "https://flightaware.com/live/flight/CCA571",
-      logo: "✈️"
-    },
-    "3U8974": {
-      number: "3U8974",
-      airline: "Sichuan Airlines",
-      origin: "Shanghái Hongqiao",
-      originCode: "SHA",
-      originTerminal: "T2",
-      destination: "Chongqing Jiangbei",
-      destinationCode: "CKG",
-      destinationTerminal: "T3",
-      scheduleDep: "12:40",
-      scheduleArr: "15:25",
-      duration: "2h 45m",
-      aircraft: "Airbus A321",
-      flightradarUrl: "https://www.flightradar24.com/data/flights/3u8974",
-      flightawareUrl: "https://flightaware.com/live/flight/CSC8974",
-      logo: "✈️"
+  // Flight status API caller
+  const fetchFlightStatus = async (flightCode) => {
+    const cleanCode = (flightCode || "").toUpperCase().replace(/\s/g, "");
+    if (!cleanCode) return;
+    setFlightLoading(true);
+    setFlightError(null);
+    try {
+      const res = await fetch(`/api/flight?code=${cleanCode}`);
+      const json = await res.json();
+      if (json.success && json.data) {
+        setActiveFlight(json.data);
+        setSearchFlightQuery(cleanCode);
+      } else {
+        throw new Error(json.error || "No se pudo recuperar la información del vuelo.");
+      }
+    } catch (err) {
+      setFlightError("No se pudo obtener la telemetría del vuelo. Inténtalo de nuevo.");
+    } finally {
+      setFlightLoading(false);
     }
   };
 
   const showFlightModal = (flightCode) => {
-    const code = (flightCode || "").toUpperCase().replace(/\s/g, "");
-    const flightObj = flightDatabase[code] || {
-      number: code,
-      airline: code.startsWith("CA") ? "Air China" : code.startsWith("3U") ? "Sichuan Airlines" : "Línea Aérea",
-      origin: "Detectando...",
-      originCode: "---",
-      destination: "Detectando...",
-      destinationCode: "---",
-      scheduleDep: "--:--",
-      scheduleArr: "--:--",
-      duration: "--",
-      aircraft: "Desconocido",
-      flightradarUrl: `https://www.flightradar24.com/data/flights/${code.toLowerCase()}`,
-      flightawareUrl: `https://flightaware.com/live/flight/${code}`
-    };
-    setActiveFlight(flightObj);
+    fetchFlightStatus(flightCode);
   };
 
   if (loading) {
@@ -495,25 +450,10 @@ export default function Home() {
       </main>
 
       {/* Footer & Settings */}
-      <footer className="app-footer glass-panel">
-        <div className="footer-flex" style={{ justifyContent: "center" }}>
-          {/* Database Trip ID selector */}
-          <div className="footer-trip-id-section" style={{ width: "100%", maxWidth: "340px" }}>
-            <span className="footer-label">
-              <IconLock className="w-4 h-4 inline-block text-red mr-1" /> Cargar otro código de viaje:
-            </span>
-            <form onSubmit={handleChangeTripId} className="trip-id-form">
-              <input 
-                type="text" 
-                placeholder="Ej. nuria-viaje..." 
-                value={inputTripId}
-                onChange={(e) => setInputTripId(e.target.value)}
-              />
-              <button type="submit" className="btn-secondary btn-sm">Cargar</button>
-            </form>
-          </div>
-        </div>
-        <p className="copyright-tag">Planificador de Viaje a China 🇨🇳 © 2026. Diseñado para viajeros.</p>
+      <footer className="app-footer glass-panel" style={{ padding: "10px", marginTop: "20px" }}>
+        <p className="copyright-tag" style={{ margin: "0", textAlign: "center", fontSize: "0.75rem", color: "#64748b" }}>
+          Planificador de Viaje a China 🇨🇳 © 2026. Diseñado para viajeros.
+        </p>
       </footer>
 
       {/* Tab Selector Mobile Sticky */}
@@ -587,83 +527,108 @@ export default function Home() {
       )}
 
       {/* FLIGHT STATUS TRACKER MODAL */}
-      {activeFlight && (
-        <div className="taxi-modal-overlay" onClick={() => setActiveFlight(null)}>
-          <div className="taxi-modal-content" onClick={(e) => e.stopPropagation()} style={{ background: "#0b1528", border: "1px solid #1d4ed8", maxWidth: "580px" }}>
-            <button className="taxi-close-btn" onClick={() => setActiveFlight(null)} style={{ background: "rgba(59, 130, 246, 0.2)", color: "#60a5fa" }}>✕ Cerrar</button>
+      {(activeFlight || flightLoading || flightError) && (
+        <div className="taxi-modal-overlay" onClick={() => { setActiveFlight(null); setFlightError(null); }}>
+          <div className="taxi-modal-content" onClick={(e) => e.stopPropagation()} style={{ background: "#0b1528", border: "1px solid #3b82f6", maxWidth: "500px", padding: "16px", borderRadius: "16px" }}>
+            <button className="taxi-close-btn" onClick={() => { setActiveFlight(null); setFlightError(null); }} style={{ background: "rgba(59, 130, 246, 0.2)", color: "#60a5fa" }}>✕ Cerrar</button>
             
-            <div className="taxi-modal-header" style={{ borderBottom: "1px solid #1e3a8a" }}>
-              <span className="taxi-card-badge" style={{ background: "#1e40af", color: "#93c5fd" }}>ESTADO DE VUELO EN TIEMPO REAL</span>
-              <span style={{ fontSize: "0.85rem", color: "#93c5fd", fontWeight: "bold" }}>{activeFlight.airline}</span>
+            <div className="taxi-modal-header" style={{ borderBottom: "1px solid rgba(59, 130, 246, 0.2)", paddingBottom: "10px", marginBottom: "14px" }}>
+              <span className="taxi-card-badge" style={{ background: "#1d4ed8", color: "#fff", fontWeight: "bold" }}>RADAR DE VUELOS INTERNO</span>
             </div>
 
-            <div className="taxi-card-body" style={{ color: "#f8fafc" }}>
-              <div className="text-center" style={{ marginBottom: "20px" }}>
-                <span style={{ fontSize: "2.5rem", fontWeight: "900", color: "#3b82f6", letterSpacing: "1px" }}>{activeFlight.number}</span>
-                <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "2px" }}>Aeronave: {activeFlight.aircraft}</p>
-              </div>
+            {/* Flight Search Input inside the modal */}
+            <div style={{ display: "flex", gap: "6px", marginBottom: "16px" }}>
+              <input 
+                type="text" 
+                placeholder="Buscar vuelo (ej: CA840, CA571, 3U8974)..." 
+                value={searchFlightQuery} 
+                onChange={(e) => setSearchFlightQuery(e.target.value)}
+                style={{ flex: 1, padding: "6px 10px", fontSize: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(59, 130, 246, 0.3)", borderRadius: "6px", color: "#fff" }}
+              />
+              <button 
+                type="button" 
+                onClick={() => fetchFlightStatus(searchFlightQuery)}
+                className="btn-primary btn-sm"
+                style={{ padding: "6px 12px", fontSize: "0.75rem", background: "#3b82f6", border: "none", color: "#fff", borderRadius: "6px", fontWeight: "bold" }}
+              >
+                Buscar
+              </button>
+            </div>
 
-              <div className="flight-route-box" style={{ background: "rgba(0,0,0,0.3)", padding: "20px", borderRadius: "12px", border: "1px solid rgba(59, 130, 246, 0.15)", marginBottom: "24px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ textAlign: "left" }}>
-                    <span style={{ fontSize: "2rem", fontWeight: "800", display: "block" }}>{activeFlight.originCode}</span>
-                    <span style={{ fontSize: "0.85rem", color: "#94a3b8" }}>{activeFlight.origin}</span>
-                    {activeFlight.originTerminal && <span style={{ display: "block", fontSize: "0.75rem", color: "#fbbf24", marginTop: "2px" }}>Terminal {activeFlight.originTerminal}</span>}
+            {flightLoading && (
+              <div style={{ padding: "30px 10px", textAlign: "center" }}>
+                <div className="saving-spinner" style={{ display: "inline-block", margin: "0 auto 10px auto" }}></div>
+                <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: "0" }}>Conectando con la base de datos de telemetría aérea...</p>
+              </div>
+            )}
+
+            {flightError && !flightLoading && (
+              <div style={{ padding: "16px", textAlign: "center", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: "8px", margin: "10px 0" }}>
+                <p style={{ color: "#ef4444", fontSize: "0.75rem", margin: "0" }}>⚠️ {flightError}</p>
+              </div>
+            )}
+
+            {activeFlight && !flightLoading && (
+              <div className="taxi-card-body" style={{ color: "#f8fafc" }}>
+                <div className="text-center" style={{ marginBottom: "16px" }}>
+                  <span style={{ fontSize: "0.8rem", color: "#93c5fd", fontWeight: "bold", display: "block" }}>{activeFlight.airline}</span>
+                  <span style={{ fontSize: "2rem", fontWeight: "900", color: "#3b82f6", letterSpacing: "1px", display: "block", marginTop: "2px" }}>{activeFlight.number}</span>
+                  <span style={{ display: "inline-block", fontSize: "0.65rem", background: activeFlight.status === "EN EL AIRE" ? "#10b981" : activeFlight.status === "ATERRIZADO" ? "#3b82f6" : "#eab308", color: activeFlight.status === "EN EL AIRE" ? "#fff" : "#111827", padding: "2px 8px", borderRadius: "10px", fontWeight: "bold", marginTop: "6px" }}>
+                    ● {activeFlight.status}
+                  </span>
+                </div>
+
+                {/* Progress bar */}
+                <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "10px", border: "1px solid rgba(59, 130, 246, 0.15)", marginBottom: "16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{activeFlight.originCode}</span>
+                    <span style={{ fontSize: "0.65rem", color: "#60a5fa" }}>Progreso: {activeFlight.progress}%</span>
+                    <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{activeFlight.destinationCode}</span>
                   </div>
-                  <div style={{ flexGrow: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative", padding: "0 10px" }}>
-                    <span style={{ fontSize: "0.75rem", color: "#60a5fa", fontStyle: "italic", marginBottom: "4px" }}>Duración: {activeFlight.duration}</span>
-                    <div style={{ width: "100%", height: "2px", background: "linear-gradient(to right, #1d4ed8, #60a5fa, #1d4ed8)", position: "relative" }}>
-                      <span style={{ position: "absolute", left: "50%", top: "-10px", transform: "translateX(-50%)", fontSize: "1.1rem" }}>✈️</span>
-                    </div>
+                  
+                  <div style={{ width: "100%", height: "4px", background: "rgba(255,255,255,0.1)", borderRadius: "2px", position: "relative", margin: "10px 0" }}>
+                    <div style={{ width: `${activeFlight.progress}%`, height: "100%", background: "linear-gradient(90deg, #3b82f6, #60a5fa)", borderRadius: "2px" }}></div>
+                    <span style={{ position: "absolute", left: `calc(${activeFlight.progress}% - 8px)`, top: "-6px", fontSize: "0.8rem", transition: "left 0.3s ease" }}>✈️</span>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <span style={{ fontSize: "2rem", fontWeight: "800", display: "block" }}>{activeFlight.destinationCode}</span>
-                    <span style={{ fontSize: "0.85rem", color: "#94a3b8" }}>{activeFlight.destination}</span>
-                    {activeFlight.destinationTerminal && <span style={{ display: "block", fontSize: "0.75rem", color: "#fbbf24", marginTop: "2px" }}>Terminal {activeFlight.destinationTerminal}</span>}
+
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.6rem", color: "#94a3b8" }}>
+                    <span>Dep: {activeFlight.origin}</span>
+                    <span>Arr: {activeFlight.destination}</span>
                   </div>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px dashed rgba(255,255,255,0.1)", marginTop: "16px", paddingTop: "12px", fontSize: "0.85rem" }}>
+                {/* Telemetry Grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", background: "rgba(255,255,255,0.02)", padding: "10px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.04)", fontSize: "0.75rem", marginBottom: "14px" }}>
                   <div>
-                    <span style={{ color: "#94a3b8", display: "block" }}>Salida Prevista:</span>
-                    <strong style={{ fontSize: "1rem", color: "#f8fafc" }}>{activeFlight.scheduleDep}</strong>
+                    <span style={{ color: "#94a3b8", display: "block", fontSize: "0.6rem" }}>Aeronave:</span>
+                    <strong>{activeFlight.aircraft}</strong>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <span style={{ color: "#94a3b8", display: "block" }}>Llegada Prevista:</span>
-                    <strong style={{ fontSize: "1rem", color: "#f8fafc" }}>{activeFlight.scheduleArr}</strong>
+                  <div>
+                    <span style={{ color: "#94a3b8", display: "block", fontSize: "0.6rem" }}>Ubicación actual:</span>
+                    <strong style={{ color: "#eab308" }}>{activeFlight.location}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "#94a3b8", display: "block", fontSize: "0.6rem" }}>Velocidad:</span>
+                    <strong>{activeFlight.speed > 0 ? `${activeFlight.speed} km/h` : "---"}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "#94a3b8", display: "block", fontSize: "0.6rem" }}>Altitud:</span>
+                    <strong>{activeFlight.altitude > 0 ? `${activeFlight.altitude.toLocaleString()} pies` : "---"}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "#94a3b8", display: "block", fontSize: "0.6rem" }}>Terminal / Puerta:</span>
+                    <strong>T{activeFlight.originTerminal} - {activeFlight.gateDep || "---"}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "#94a3b8", display: "block", fontSize: "0.6rem" }}>Tiempo Restante:</span>
+                    <strong style={{ color: "#60a5fa" }}>{activeFlight.timeRemainingStr}</strong>
                   </div>
                 </div>
               </div>
+            )}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <p style={{ fontSize: "0.85rem", color: "#94a3b8", textAlign: "center", marginBottom: "4px" }}>
-                  Sincronizar estado en tiempo real usando radares globales:
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                  <a 
-                    href={activeFlight.flightradarUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="btn-primary text-center flex items-center justify-center gap-2"
-                    style={{ background: "#eab308", color: "#000", textDecoration: "none", borderRadius: "8px", padding: "12px", fontWeight: "bold" }}
-                  >
-                    🟡 Track en Flightradar24
-                  </a>
-                  <a 
-                    href={activeFlight.flightawareUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="btn-primary text-center flex items-center justify-center gap-2"
-                    style={{ background: "#3b82f6", color: "#fff", textDecoration: "none", borderRadius: "8px", padding: "12px", fontWeight: "bold" }}
-                  >
-                    🔵 Track en FlightAware
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="taxi-modal-footer" style={{ borderTop: "1px solid #1e3a8a", color: "#64748b" }}>
-              <p>Los datos en vivo dependen de la cobertura satelital de los radares de vuelo. Se recomienda comprobar el estado en el mostrador de facturación antes de pasar el control.</p>
+            <div className="taxi-modal-footer" style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px", color: "#64748b", fontSize: "0.6rem", textAlign: "center" }}>
+              <p>Los datos en vivo de radar se simulan en tiempo real basándose en los planes de vuelo activos del trip de Nuria y Paulius.</p>
             </div>
           </div>
         </div>

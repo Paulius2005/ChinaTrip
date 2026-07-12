@@ -71,8 +71,17 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
 
     return () => clearInterval(timer);
   }, []);
-
   // Today's active day calculations
+  const getCityAbbrev = (city) => {
+    if (!city) return "TRN";
+    if (city.includes("Shanghái")) return "SHA";
+    if (city.includes("Chongqing")) return "CKG";
+    if (city.includes("Chengdu")) return "CTU";
+    if (city.includes("Xi'an")) return "SIA";
+    if (city.includes("Pekín") || city.includes("Beijing")) return "PEK";
+    return "TRN";
+  };
+
   const getTodayDay = () => {
     if (typeof window === "undefined" || !Array.isArray(itinerary) || itinerary.length === 0) return { day: null, label: "" };
 
@@ -85,7 +94,7 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
     
     // Default fallback to preview selected day
     const previewDay = itinerary.find(day => day && day.id === previewDayId) || itinerary[0];
-    return { day: previewDay, label: `Vista Previa: Día Simulado` };
+    return { day: previewDay, label: `Vista Previa: Día Seleccionado` };
   };
 
   const { day: activeDay, label: dayLabel } = getTodayDay();
@@ -122,7 +131,7 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
   // Emergency translations
   const emergencyPhrases = [
     { esp: "Tengo una urgencia médica, llame a una ambulancia", hanzi: "我有医疗紧急情况，请叫救护车！", pinyin: "Wǒ yǒu yīliáo jǐnjí qíngkuàng, qǐng jiào jiùhùchē!" },
-    { esp: "Estoy perdido, ¿dónde está la estación de metro más cercana?", hanzi: "我迷路了，请问最近的地铁站在哪里？", pinyin: "Wǒ mílù le, qǐngwèn zuìjìn de dìtiě zhàn zài nǎlǐ?" },
+    { esp: "Estoy perdido, ¿dónde está la estación de metro más cercana?", hanzi: "我迷路了，请问最近 de 地铁站在哪里？", pinyin: "Wǒ mìlù le, qǐngwèn zuìjìn de dìtiě zhàn zài nǎlǐ?" },
     { esp: "Llamen a la policía, me han robado", hanzi: "请叫警察，我的东西被偷了。", pinyin: "Qǐng jiào jǐngchá, wǒ de dōngxī bèi tōu le." },
     { esp: "Por favor, ayúdeme", hanzi: "请帮帮我，谢谢！", pinyin: "Qǐng bāngbāng wǒ, xièxie!" }
   ];
@@ -167,6 +176,65 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
         </div>
         <div className="hero-artwork">
           <div className="pagoda-silhouette"></div>
+        </div>
+      </div>
+
+      {/* CALENDARIO DE RUTA INTERACTIVO */}
+      <div className="card glass-panel route-calendar-card" style={{ marginBottom: "14px", padding: "12px" }}>
+        <h3 className="card-title" style={{ fontSize: "0.85rem", color: "#eab308", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+          📅 Calendario de Ruta (Toca un día para ver su plan)
+        </h3>
+        <div className="calendar-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "6px" }}>
+          {safeItinerary.map((d, index) => {
+            const isSelected = d.id === previewDayId;
+            const isToday = d.date === new Date().toISOString().split("T")[0];
+            const cityAbbr = getCityAbbrev(d.city);
+            const dateParts = d.date.split("-");
+            const dayNum = dateParts[2];
+            
+            // Icon overlays
+            const hasFlight = d.transport?.type === "flight";
+            const hasTrain = d.transport?.type === "train";
+            
+            return (
+              <button
+                key={d.id}
+                type="button"
+                onClick={() => setPreviewDayId(d.id)}
+                className={`calendar-tile ${isSelected ? "selected" : ""} ${isToday ? "today" : ""}`}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "5px 2px",
+                  background: isSelected ? "rgba(234, 179, 8, 0.18)" : isToday ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.02)",
+                  border: isSelected ? "1px solid #eab308" : isToday ? "1px dashed rgba(234, 179, 8, 0.5)" : "1px solid rgba(255,255,255,0.05)",
+                  borderRadius: "8px",
+                  color: isSelected ? "#eab308" : "#fff",
+                  cursor: "pointer",
+                  minHeight: "56px",
+                  position: "relative",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                {/* Small indicator badges */}
+                <div style={{ display: "flex", gap: "2px", position: "absolute", top: "2px", right: "2px" }}>
+                  {hasFlight && <span style={{ fontSize: "0.55rem" }}>✈️</span>}
+                  {hasTrain && <span style={{ fontSize: "0.55rem" }}>🚄</span>}
+                </div>
+                {isToday && (
+                  <span style={{ position: "absolute", bottom: "2px", right: "2px", width: "4px", height: "4px", background: "#ef4444", borderRadius: "50%" }}></span>
+                )}
+
+                <span style={{ fontSize: "0.6rem", color: isSelected ? "#eab308" : "#94a3b8", fontWeight: "bold" }}>D{index + 1}</span>
+                <span style={{ fontSize: "0.95rem", fontWeight: "800", margin: "1px 0", color: isSelected ? "#eab308" : "#fff" }}>{dayNum}</span>
+                <span style={{ fontSize: "0.55rem", background: "rgba(255,255,255,0.05)", padding: "1px 3px", borderRadius: "3px", color: isSelected ? "#eab308" : "#cbd5e1" }}>
+                  {cityAbbr}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
