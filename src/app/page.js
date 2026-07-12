@@ -4,14 +4,13 @@ import React, { useState, useEffect } from "react";
 import DashboardView from "@/components/DashboardView";
 import ItineraryView from "@/components/ItineraryView";
 import ExpenseTracker from "@/components/ExpenseTracker";
-import PackingList from "@/components/PackingList";
 import SurvivalGuide from "@/components/SurvivalGuide";
 import { 
-  initialItinerary, initialPacking, initialSurvival, initialExpenses 
+  initialItinerary, initialSurvival, initialExpenses 
 } from "@/data/initialData";
 import { 
-  IconCalendar, IconBriefcase, IconDollar, IconBookOpen, IconCompass, 
-  IconShare, IconLock, IconCheck, IconInfo, IconClock, IconVolume 
+  IconCalendar, IconDollar, IconBookOpen, IconCompass, 
+  IconShare, IconLock, IconCheck, IconInfo, IconClock, IconVolume, IconPlane
 } from "@/components/Icons";
 
 export default function Home() {
@@ -20,7 +19,6 @@ export default function Home() {
   
   // App States initialized with local templates (no more blank screens)
   const [itinerary, setItinerary] = useState(initialItinerary);
-  const [packing, setPacking] = useState(initialPacking);
   const [survival, setSurvival] = useState(initialSurvival);
   const [expenses, setExpenses] = useState(initialExpenses);
   const [budget, setBudget] = useState(3000);
@@ -38,6 +36,9 @@ export default function Home() {
   const [taxiHotel, setTaxiHotel] = useState(null);
   const [highContrast, setHighContrast] = useState(true);
 
+  // Flight Tracker State
+  const [activeFlight, setActiveFlight] = useState(null); // flight object or code
+
   // Monitor network connectivity
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -45,7 +46,6 @@ export default function Home() {
       
       const handleOnline = () => {
         setIsOffline(false);
-        // Auto-sync if online and changes are pending
         if (pendingSync) {
           triggerSync();
         }
@@ -64,7 +64,7 @@ export default function Home() {
         window.removeEventListener("offline", handleOffline);
       };
     }
-  }, [pendingSync, itinerary, packing, survival, expenses, budget]);
+  }, [pendingSync, itinerary, survival, expenses, budget]);
 
   // Detect Trip ID from URL and Load Data
   useEffect(() => {
@@ -85,8 +85,6 @@ export default function Home() {
       
       if (result.success && result.data) {
         setItinerary(result.data.itinerary || initialItinerary);
-        setPacking(result.data.packing || initialPacking);
-        // Fallback to template if DB is empty or missing survival guides
         setSurvival(result.data.survival || initialSurvival);
         setExpenses(result.data.expenses || initialExpenses);
         setBudget(result.data.budget || 3000);
@@ -99,13 +97,11 @@ export default function Home() {
       }
     } catch (error) {
       console.warn("Could not load from API, trying local storage cache:", error);
-      // Fallback to local storage
       const cached = localStorage.getItem(`china_trip_${id}`);
       if (cached) {
         try {
           const cachedData = JSON.parse(cached);
           setItinerary(cachedData.itinerary || initialItinerary);
-          setPacking(cachedData.packing || initialPacking);
           setSurvival(cachedData.survival || initialSurvival);
           setExpenses(cachedData.expenses || initialExpenses);
           setBudget(cachedData.budget || 3000);
@@ -124,7 +120,7 @@ export default function Home() {
     if (isOffline) return;
     
     setSaving(true);
-    const dataToSave = { itinerary, packing, survival, expenses, budget };
+    const dataToSave = { itinerary, survival, expenses, budget };
     
     try {
       const res = await fetch(`/api/trip?id=${tripId}`, {
@@ -150,7 +146,6 @@ export default function Home() {
   const saveTripData = async (updatedFields) => {
     const currentData = {
       itinerary: updatedFields.itinerary !== undefined ? updatedFields.itinerary : itinerary,
-      packing: updatedFields.packing !== undefined ? updatedFields.packing : packing,
       survival: updatedFields.survival !== undefined ? updatedFields.survival : survival,
       expenses: updatedFields.expenses !== undefined ? updatedFields.expenses : expenses,
       budget: updatedFields.budget !== undefined ? updatedFields.budget : budget
@@ -158,7 +153,6 @@ export default function Home() {
 
     // Update local state immediately
     if (updatedFields.itinerary !== undefined) setItinerary(updatedFields.itinerary);
-    if (updatedFields.packing !== undefined) setPacking(updatedFields.packing);
     if (updatedFields.survival !== undefined) setSurvival(updatedFields.survival);
     if (updatedFields.expenses !== undefined) setExpenses(updatedFields.expenses);
     if (updatedFields.budget !== undefined) setBudget(updatedFields.budget);
@@ -192,7 +186,6 @@ export default function Home() {
   };
 
   const updateItinerary = (newItinerary) => saveTripData({ itinerary: newItinerary });
-  const updatePacking = (newPacking) => saveTripData({ packing: newPacking });
   const updateSurvival = (newSurvival) => saveTripData({ survival: newSurvival });
   const updateExpenses = (newExpenses) => saveTripData({ expenses: newExpenses });
   const updateBudget = (newBudget) => saveTripData({ budget: newBudget });
@@ -228,6 +221,80 @@ export default function Home() {
     setTaxiHotel(lodging);
   };
 
+  // Flight Tracker details database
+  const flightDatabase = {
+    CA840: {
+      number: "CA840",
+      airline: "Air China",
+      origin: "Barcelona",
+      originCode: "BCN",
+      originTerminal: "T1",
+      destination: "Shanghái Pudong",
+      destinationCode: "PVG",
+      destinationTerminal: "T2",
+      scheduleDep: "15:30",
+      scheduleArr: "10:30 (+1)",
+      duration: "12h 35m",
+      aircraft: "Airbus A350-900",
+      flightradarUrl: "https://www.flightradar24.com/data/flights/ca840",
+      flightawareUrl: "https://flightaware.com/live/flight/CCA840",
+      logo: "✈️"
+    },
+    CA571: {
+      number: "CA571",
+      airline: "Air China",
+      origin: "Pekín Capital",
+      originCode: "PEK",
+      originTerminal: "T3",
+      destination: "Barcelona",
+      destinationCode: "BCN",
+      destinationTerminal: "T1",
+      scheduleDep: "02:30",
+      scheduleArr: "08:15",
+      duration: "11h 45m",
+      aircraft: "Airbus A350-900",
+      flightradarUrl: "https://www.flightradar24.com/data/flights/ca571",
+      flightawareUrl: "https://flightaware.com/live/flight/CCA571",
+      logo: "✈️"
+    },
+    "3U8974": {
+      number: "3U8974",
+      airline: "Sichuan Airlines",
+      origin: "Shanghái Hongqiao",
+      originCode: "SHA",
+      originTerminal: "T2",
+      destination: "Chongqing Jiangbei",
+      destinationCode: "CKG",
+      destinationTerminal: "T3",
+      scheduleDep: "12:40",
+      scheduleArr: "15:25",
+      duration: "2h 45m",
+      aircraft: "Airbus A321",
+      flightradarUrl: "https://www.flightradar24.com/data/flights/3u8974",
+      flightawareUrl: "https://flightaware.com/live/flight/CSC8974",
+      logo: "✈️"
+    }
+  };
+
+  const showFlightModal = (flightCode) => {
+    const code = (flightCode || "").toUpperCase().replace(/\s/g, "");
+    const flightObj = flightDatabase[code] || {
+      number: code,
+      airline: code.startsWith("CA") ? "Air China" : code.startsWith("3U") ? "Sichuan Airlines" : "Línea Aérea",
+      origin: "Detectando...",
+      originCode: "---",
+      destination: "Detectando...",
+      destinationCode: "---",
+      scheduleDep: "--:--",
+      scheduleArr: "--:--",
+      duration: "--",
+      aircraft: "Desconocido",
+      flightradarUrl: `https://www.flightradar24.com/data/flights/${code.toLowerCase()}`,
+      flightawareUrl: `https://flightaware.com/live/flight/${code}`
+    };
+    setActiveFlight(flightObj);
+  };
+
   if (loading) {
     return (
       <div className="app-loading-screen">
@@ -239,7 +306,6 @@ export default function Home() {
     );
   }
 
-  // Double check fallback to survive guide (redundant safety)
   const survivalData = survival || initialSurvival;
 
   return (
@@ -305,12 +371,6 @@ export default function Home() {
             <IconDollar className="w-4 h-4" /> Gastos
           </button>
           <button 
-            className={`nav-tab-btn ${activeTab === "packing" ? "active" : ""}`}
-            onClick={() => setActiveTab("packing")}
-          >
-            <IconBriefcase className="w-4 h-4" /> Maleta
-          </button>
-          <button 
             className={`nav-tab-btn ${activeTab === "survival" ? "active" : ""}`}
             onClick={() => setActiveTab("survival")}
           >
@@ -324,10 +384,10 @@ export default function Home() {
         {activeTab === "dashboard" && (
           <DashboardView 
             itinerary={itinerary} 
-            packing={packing} 
             expenses={expenses}
             updateItinerary={updateItinerary}
             showTaxiHelper={showTaxiHelper}
+            showFlightModal={showFlightModal}
           />
         )}
         {activeTab === "itinerary" && (
@@ -335,6 +395,7 @@ export default function Home() {
             itinerary={itinerary} 
             updateItinerary={updateItinerary} 
             showTaxiHelper={showTaxiHelper}
+            showFlightModal={showFlightModal}
           />
         )}
         {activeTab === "expenses" && (
@@ -343,12 +404,6 @@ export default function Home() {
             budget={budget}
             updateExpenses={updateExpenses}
             updateBudget={updateBudget}
-          />
-        )}
-        {activeTab === "packing" && (
-          <PackingList 
-            packing={packing} 
-            updatePacking={updatePacking} 
           />
         )}
         {activeTab === "survival" && (
@@ -427,13 +482,6 @@ export default function Home() {
           <span>Gastos</span>
         </button>
         <button 
-          className={`mobile-tab-btn ${activeTab === "packing" ? "active" : ""}`}
-          onClick={() => setActiveTab("packing")}
-        >
-          <IconBriefcase className="w-5 h-5" />
-          <span>Maleta</span>
-        </button>
-        <button 
           className={`mobile-tab-btn ${activeTab === "survival" ? "active" : ""}`}
           onClick={() => setActiveTab("survival")}
         >
@@ -460,7 +508,6 @@ export default function Home() {
             </div>
 
             <div className="taxi-card-body">
-              {/* Polite instructions in Chinese to the driver */}
               <p className="taxi-chinese-intro">师傅，您好！请带我去这个地址，谢谢：</p>
               
               <div className="taxi-address-box">
@@ -476,6 +523,89 @@ export default function Home() {
 
             <div className="taxi-modal-footer">
               <p>Muestra esta pantalla directamente al conductor de taxi. La combinación de color amarillo y negro de alto contraste facilita su lectura en la oscuridad o a través de la mampara del taxi.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLIGHT STATUS TRACKER MODAL */}
+      {activeFlight && (
+        <div className="taxi-modal-overlay" onClick={() => setActiveFlight(null)}>
+          <div className="taxi-modal-content" onClick={(e) => e.stopPropagation()} style={{ background: "#0b1528", border: "1px solid #1d4ed8", maxWidth: "580px" }}>
+            <button className="taxi-close-btn" onClick={() => setActiveFlight(null)} style={{ background: "rgba(59, 130, 246, 0.2)", color: "#60a5fa" }}>✕ Cerrar</button>
+            
+            <div className="taxi-modal-header" style={{ borderBottom: "1px solid #1e3a8a" }}>
+              <span className="taxi-card-badge" style={{ background: "#1e40af", color: "#93c5fd" }}>ESTADO DE VUELO EN TIEMPO REAL</span>
+              <span style={{ fontSize: "0.85rem", color: "#93c5fd", fontWeight: "bold" }}>{activeFlight.airline}</span>
+            </div>
+
+            <div className="taxi-card-body" style={{ color: "#f8fafc" }}>
+              <div className="text-center" style={{ marginBottom: "20px" }}>
+                <span style={{ fontSize: "2.5rem", fontWeight: "900", color: "#3b82f6", letterSpacing: "1px" }}>{activeFlight.number}</span>
+                <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "2px" }}>Aeronave: {activeFlight.aircraft}</p>
+              </div>
+
+              <div className="flight-route-box" style={{ background: "rgba(0,0,0,0.3)", padding: "20px", borderRadius: "12px", border: "1px solid rgba(59, 130, 246, 0.15)", marginBottom: "24px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ textAlign: "left" }}>
+                    <span style={{ fontSize: "2rem", fontWeight: "800", display: "block" }}>{activeFlight.originCode}</span>
+                    <span style={{ fontSize: "0.85rem", color: "#94a3b8" }}>{activeFlight.origin}</span>
+                    {activeFlight.originTerminal && <span style={{ display: "block", fontSize: "0.75rem", color: "#fbbf24", marginTop: "2px" }}>Terminal {activeFlight.originTerminal}</span>}
+                  </div>
+                  <div style={{ flexGrow: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative", padding: "0 10px" }}>
+                    <span style={{ fontSize: "0.75rem", color: "#60a5fa", fontStyle: "italic", marginBottom: "4px" }}>Duración: {activeFlight.duration}</span>
+                    <div style={{ width: "100%", height: "2px", background: "linear-gradient(to right, #1d4ed8, #60a5fa, #1d4ed8)", position: "relative" }}>
+                      <span style={{ position: "absolute", left: "50%", top: "-10px", transform: "translateX(-50%)", fontSize: "1.1rem" }}>✈️</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <span style={{ fontSize: "2rem", fontWeight: "800", display: "block" }}>{activeFlight.destinationCode}</span>
+                    <span style={{ fontSize: "0.85rem", color: "#94a3b8" }}>{activeFlight.destination}</span>
+                    {activeFlight.destinationTerminal && <span style={{ display: "block", fontSize: "0.75rem", color: "#fbbf24", marginTop: "2px" }}>Terminal {activeFlight.destinationTerminal}</span>}
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px dashed rgba(255,255,255,0.1)", marginTop: "16px", paddingTop: "12px", fontSize: "0.85rem" }}>
+                  <div>
+                    <span style={{ color: "#94a3b8", display: "block" }}>Salida Prevista:</span>
+                    <strong style={{ fontSize: "1rem", color: "#f8fafc" }}>{activeFlight.scheduleDep}</strong>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <span style={{ color: "#94a3b8", display: "block" }}>Llegada Prevista:</span>
+                    <strong style={{ fontSize: "1rem", color: "#f8fafc" }}>{activeFlight.scheduleArr}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <p style={{ fontSize: "0.85rem", color: "#94a3b8", textAlign: "center", marginBottom: "4px" }}>
+                  Sincronizar estado en tiempo real usando radares globales:
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <a 
+                    href={activeFlight.flightradarUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-primary text-center flex items-center justify-center gap-2"
+                    style={{ background: "#eab308", color: "#000", textDecoration: "none", borderRadius: "8px", padding: "12px", fontWeight: "bold" }}
+                  >
+                    🟡 Track en Flightradar24
+                  </a>
+                  <a 
+                    href={activeFlight.flightawareUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-primary text-center flex items-center justify-center gap-2"
+                    style={{ background: "#3b82f6", color: "#fff", textDecoration: "none", borderRadius: "8px", padding: "12px", fontWeight: "bold" }}
+                  >
+                    🔵 Track en FlightAware
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="taxi-modal-footer" style={{ borderTop: "1px solid #1e3a8a", color: "#64748b" }}>
+              <p>Los datos en vivo dependen de la cobertura satelital de los radares de vuelo. Se recomienda comprobar el estado en el mostrador de facturación antes de pasar el control.</p>
             </div>
           </div>
         </div>

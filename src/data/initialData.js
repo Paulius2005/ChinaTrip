@@ -4,22 +4,22 @@ export const initialItinerary = [
     date: "2026-07-17",
     dayOfWeek: "Viernes",
     city: "En tránsito",
-    title: "Vuelo Barcelona (BCN) - Shanghái",
+    title: "Vuelo Barcelona (BCN) - Shanghái (PVG)",
     transport: {
       type: "flight",
-      details: "Vuelo transcontinental BCN - PVG (Shanghái). Llegada al día siguiente.",
+      details: "Vuelo internacional Air China CA840. BCN 15:30 -> PVG 10:30 (+1).",
       bookingStatus: "booked"
     },
     lodging: {
       name: "Noche a bordo del avión",
-      address: "Cabina de vuelo",
+      address: "Vuelo CA840",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-1-1", time: "12:00", title: "Llegada al Aeropuerto de Barcelona-El Prat", description: "Llegar con 3 horas de antelación. Facturación de equipaje y control de pasaportes.", category: "transit" },
-      { id: "act-1-2", time: "15:30", title: "Salida del vuelo", description: "Vuelo con escala hacia Shanghái Pudong (PVG). ¡Comienza la aventura!", category: "transit" }
+      { id: "act-1-1", time: "12:30", title: "Llegada al Aeropuerto de Barcelona-El Prat", description: "Llegar con 3 horas de antelación al terminal T1 para facturar equipaje y pasar control de seguridad.", category: "transit" },
+      { id: "act-1-2", time: "15:30", title: "Despegue del vuelo CA840", description: "Vuelo directo operado por Air China hacia Shanghái Pudong (PVG) en un Airbus A350-900. ¡Buen vuelo!", category: "transit" }
     ],
-    notes: "Asegúrate de llevar el pasaporte físico, copia del visado (si aplica) y la confirmación de los vuelos. Descarga la eSIM o configura la VPN antes de despegar."
+    notes: "Lleva encima tu pasaporte original y comprueba que has descargado e instalado tu eSIM/VPN antes de despegar."
   },
   {
     id: "day-2",
@@ -29,23 +29,23 @@ export const initialItinerary = [
     title: "Llegada a Shanghái",
     transport: {
       type: "taxi",
-      details: "Maglev (tren de levitación magnética) o Taxi desde el Aeropuerto PVG al hotel.",
+      details: "Taxi o Maglev (tren de levitación magnética) desde el Aeropuerto PVG al hotel.",
       bookingStatus: "pending"
     },
     lodging: {
-      name: "The Bund Hotel (o similar)",
-      nameChinese: "上海外滩大酒店",
-      address: "528 Henan Middle Rd, Huangpu, Shanghai",
-      addressChinese: "上海市黄浦区河南中路528号 (近北京东路)",
+      name: "Youli Hotel (Shanghai People's Square)",
+      nameChinese: "友里酒店(上海人民广场店)",
+      address: "No. 41-47 Yunnan Middle Road, Huangpu, Shanghai, China",
+      addressChinese: "上海市黄浦区云南中路41-47号",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-2-1", time: "10:30", title: "Aterrizaje en Shanghái Pudong (PVG)", description: "Control sanitario, inmigración, recogida de maletas. Retirar yuanes en cajero del aeropuerto o pagar con Alipay/WeChat Pay.", category: "transit" },
-      { id: "act-2-2", time: "13:00", title: "Check-in en el Hotel", description: "Registro con el pasaporte original (obligatorio en todos los hoteles de China). Descanso corto para recuperarse del jet lag.", category: "hotel" },
-      { id: "act-2-3", time: "18:00", title: "Paseo atardecer por The Bund (El Malecón)", description: "Primer contacto visual con el skyline futurista de Pudong y los edificios coloniales de Puxi. Cruce en ferry público si hay tiempo.", category: "sightseeing" },
-      { id: "act-2-4", time: "20:00", title: "Cena de bienvenida en Nanjing Road", description: "Probar las famosas empanadillas Shengjianbao (dumplings fritos de Shanghái).", category: "dining" }
+      { id: "act-2-1", time: "10:30", title: "Aterrizaje en Shanghái Pudong (PVG)", description: "Llegada al Terminal 2. Inmigración (toma de huellas), recogida de maletas. Activar eSIM y VPN.", category: "transit" },
+      { id: "act-2-2", time: "13:00", title: "Check-in en Youli Hotel", description: "Registro con pasaporte físico original. El hotel está fantásticamente ubicado cerca de la Plaza del Pueblo.", category: "hotel" },
+      { id: "act-2-3", time: "18:00", title: "Paseo por The Bund al atardecer", description: "Primer contacto visual con el espectacular skyline iluminado de Pudong y los edificios de Puxi.", category: "sightseeing" },
+      { id: "act-2-4", time: "20:00", title: "Cena en Nanjing Road", description: "Probar dumplings y comida local en la concurrida calle peatonal.", category: "dining" }
     ],
-    notes: "Instala el miniprograma de transporte de Shanghái en Alipay para pagar el metro fácilmente."
+    notes: "Usa el botón 🚕 Taxista en la tarjeta de hotel si coges taxi en el aeropuerto para mostrar la dirección en chino gigante."
   },
   {
     id: "day-3",
@@ -59,45 +59,45 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     lodging: {
-      name: "The Bund Hotel (o similar)",
-      nameChinese: "上海外滩大酒店",
-      address: "528 Henan Middle Rd, Huangpu, Shanghai",
-      addressChinese: "上海市黄浦区河南中路528号 (近北京东路)",
+      name: "Youli Hotel (Shanghai People's Square)",
+      nameChinese: "友里酒店(上海人民广场店)",
+      address: "No. 41-47 Yunnan Middle Road, Huangpu, Shanghai, China",
+      addressChinese: "上海市黄浦区云南中路41-47号",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-3-1", time: "09:00", title: "Jardín Yuyuan y Ciudad Vieja", description: "Pasear por el jardín tradicional del siglo XVI y los bazares de madera colindantes. Tomar un té verde.", category: "sightseeing" },
-      { id: "act-3-2", time: "13:00", title: "Almuerzo de Xiao Long Bao", description: "Comer los famosos dumplings de caldo en Nanxiang Steamed Bun Restaurant.", category: "dining" },
-      { id: "act-3-3", time: "15:00", title: "Cruzar a Pudong y subir a la Torre de Shanghái", description: "Subir al segundo rascacielos más alto del mundo (632m) para contemplar las vistas panorámicas.", category: "sightseeing" },
-      { id: "act-3-4", time: "18:30", title: "Paseo por la Concesión Francesa", description: "Caminar bajo los árboles plátanos en la zona de Xintiandi o Tianzifang, lleno de tiendas boutique y cafeterías.", category: "sightseeing" }
+      { id: "act-3-1", time: "09:00", title: "Jardín Yuyuan y Ciudad Vieja", description: "Recorrer el jardín tradicional del siglo XVI y los bazares tradicionales de madera.", category: "sightseeing" },
+      { id: "act-3-2", time: "13:00", title: "Almuerzo de Xiao Long Bao", description: "Probar los famosos dumplings rellenos de caldo en Nanxiang Steamed Bun Restaurant.", category: "dining" },
+      { id: "act-3-3", time: "15:30", title: "Cruzar a Pudong y subir a la Torre de Shanghái", description: "Subir al segundo rascacielos más alto del mundo (632m) para disfrutar de vistas panorámicas.", category: "sightseeing" },
+      { id: "act-3-4", time: "19:00", title: "Cena y paseo en la Concesión Francesa", description: "Pasear bajo los árboles plátanos en Xintiandi o Tianzifang, llenos de boutiques y cafés.", category: "sightseeing" }
     ],
-    notes: "Comprar las entradas de la Torre de Shanghái con antelación en WeChat/Trip.com si es posible."
+    notes: "Compra las entradas para la Torre de Shanghái con antelación en WeChat o Trip.com."
   },
   {
     id: "day-4",
     date: "2026-07-20",
     dayOfWeek: "Lunes",
     city: "Shanghái - Chongqing",
-    title: "Trayecto a Chongqing: La Ciudad de Montaña",
+    title: "Vuelo a Chongqing: La Ciudad de Montaña",
     transport: {
-      type: "train",
-      details: "Tren de alta velocidad Shanghái - Chongqing (aprox. 7-11 horas) o Vuelo doméstico (aprox. 3 horas).",
+      type: "flight",
+      details: "Vuelo Sichuan Airlines 3U8974. SHA 12:40 -> CKG 15:25.",
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Jiefangbei Mountain View Hotel",
-      nameChinese: "重庆解放碑山景酒店",
-      address: "Jiefangbei Pedestrian Street, Yuzhong District, Chongqing",
-      addressChinese: "重庆市渝中区解放碑步行街/民族路",
+      name: "TheMoss High-altitude Viewing Hotel",
+      nameChinese: "TheMoss木肆之野酒店(解放碑洪崖洞店)",
+      address: "35th Floor, Xinhua International Building, No. 27 Minquan Road, Yuzhong District, Chongqing, China (+86-23-68896663)",
+      addressChinese: "重庆市渝中区民权路27号新华国际大厦35楼 (电话: +86-23-68896663)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-4-1", time: "08:00", title: "Traslado a la estación de tren / aeropuerto", description: "Check-out del hotel en Shanghái y transporte matutino.", category: "transit" },
-      { id: "act-4-2", time: "15:30", title: "Llegada a Chongqing y Check-in", description: "Sorprenderse con la verticalidad de la ciudad construida sobre colinas y ríos.", category: "hotel" },
-      { id: "act-4-3", time: "18:30", title: "Visita nocturna a Hongyadong", description: "Espectacular complejo de edificios tradicionales colgados en el acantilado iluminados de color dorado. Parece sacado de El Viaje de Chihiro.", category: "sightseeing" },
-      { id: "act-4-4", time: "20:30", title: "Cena de Hot Pot de Chongqing", description: "Probar el famoso caldero picante (puedes pedir caldo partido no picante/picante). ¡Una experiencia obligatoria!", category: "dining" }
+      { id: "act-4-1", time: "09:30", title: "Traslado al Aeropuerto de Shanghái Hongqiao (SHA)", description: "Check-out en Shanghái y traslado al aeropuerto de Hongqiao para el vuelo doméstico.", category: "transit" },
+      { id: "act-4-2", time: "12:40", title: "Despegue del vuelo 3U8974", description: "Vuelo de Sichuan Airlines con destino al Aeropuerto de Chongqing Jiangbei (CKG).", category: "transit" },
+      { id: "act-4-3", time: "16:30", title: "Check-in en TheMoss Hotel (Piso 35)", description: "Hacer el check-in en el hotel. Al estar en la planta 35, tiene vistas espectaculares de la ciudad 8D.", category: "hotel" },
+      { id: "act-4-4", time: "19:00", title: "Cena nocturna en Hongyadong", description: "Complejo de edificios tradicionales iluminados colgados en el acantilado. Probar el famoso Hot Pot de Chongqing.", category: "sightseeing" }
     ],
-    notes: "Ojo: Google Maps no funciona bien aquí por la orografía y la falta de actualización. Usa Apple Maps o Baidu Maps."
+    notes: "Usa el botón 🚕 Taxista para el trayecto desde el aeropuerto de Chongqing. El número del hotel es +86-23-68896663."
   },
   {
     id: "day-5",
@@ -107,23 +107,23 @@ export const initialItinerary = [
     title: "Explorando la ciudad tridimensional",
     transport: {
       type: "metro",
-      details: "Metro flotante e intrincado de Chongqing.",
+      details: "Metro de Chongqing.",
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Jiefangbei Mountain View Hotel",
-      nameChinese: "重庆解放碑山景酒店",
-      address: "Jiefangbei Pedestrian Street, Yuzhong District, Chongqing",
-      addressChinese: "重庆市渝中区解放碑步行街/民族路",
+      name: "TheMoss High-altitude Viewing Hotel",
+      nameChinese: "TheMoss木肆之野酒店(解放碑洪崖洞店)",
+      address: "35th Floor, Xinhua International Building, No. 27 Minquan Road, Yuzhong District, Chongqing, China (+86-23-68896663)",
+      addressChinese: "重庆市渝中区民权路27号新华国际大厦35楼 (电话: +86-23-68896663)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-5-1", time: "09:30", title: "Estación de metro Liziba (Línea 2)", description: "Ver el metro que atraviesa un edificio residencial. Imprescindible para fotos.", category: "sightseeing" },
-      { id: "act-5-2", time: "11:30", title: "Pueblo Antiguo de Ciqikou", description: "Pasear por calles tradicionales, comprar aperitivos y té.", category: "sightseeing" },
-      { id: "act-5-3", time: "16:00", title: "Teleférico del Río Yangtze", description: "Cruzar el gran río en el teleférico histórico con vistas brutales.", category: "sightseeing" },
-      { id: "act-5-4", time: "19:30", title: "Monumento de la Liberación (Jiefangbei)", description: "Zona comercial ultra-moderna rodeada de luces LED gigantes.", category: "sightseeing" }
+      { id: "act-5-1", time: "09:30", title: "Estación de metro Liziba (Línea 2)", description: "Ver el monorraíl atravesando por dentro el edificio residencial de 19 plantas. Salir a la plaza del mirador.", category: "sightseeing" },
+      { id: "act-5-2", time: "11:30", title: "Pueblo Antiguo de Ciqikou", description: "Caminar por las empedradas calles comerciales tradicionales de Chongqing.", category: "sightseeing" },
+      { id: "act-5-3", time: "16:00", title: "Teleférico del Río Yangtze", description: "Cruzar el río Yangtze en el teleférico colgante clásico.", category: "sightseeing" },
+      { id: "act-5-4", time: "19:30", title: "Paseo por el Monumento de la Liberación (Jiefangbei)", description: "Zona peatonal ultra-moderna de rascacielos al lado de vuestro hotel.", category: "sightseeing" }
     ],
-    notes: "Prepárate para subir y bajar escaleras constantemente. Chongqing es conocida como la 'ciudad 8D'."
+    notes: "Lleva calzado con buena suela. Chongqing tiene pendientes y escaleras interminables."
   },
   {
     id: "day-6",
@@ -137,19 +137,19 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Jiefangbei Mountain View Hotel",
-      nameChinese: "重庆解放碑山景酒店",
-      address: "Jiefangbei Pedestrian Street, Yuzhong District, Chongqing",
-      addressChinese: "重庆市渝中区解放碑步行街/民族路",
+      name: "TheMoss High-altitude Viewing Hotel",
+      nameChinese: "TheMoss木肆之野酒店(解放碑洪崖洞店)",
+      address: "35th Floor, Xinhua International Building, No. 27 Minquan Road, Yuzhong District, Chongqing, China (+86-23-68896663)",
+      addressChinese: "重庆市渝中区民权路27号新华国际大厦35楼 (电话: +86-23-68896663)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-6-1", time: "10:00", title: "Sichuan Fine Arts Institute", description: "Calle del grafiti y campus artístico con esculturas surrealistas.", category: "sightseeing" },
-      { id: "act-6-2", time: "13:00", title: "Fideos picantes de Chongqing", description: "Almuerzo rápido de Chongqing Xiaomian.", category: "dining" },
-      { id: "act-6-3", time: "15:30", title: "Raffles City Chongqing", description: "Visitar el masivo centro comercial y su mirador en las alturas.", category: "sightseeing" },
-      { id: "act-6-4", time: "20:00", title: "Crucero nocturno Liangjiang", description: "Opcional: paseo en barco para ver el skyline iluminado.", category: "sightseeing" }
+      { id: "act-6-1", time: "10:00", title: "Sichuan Fine Arts Institute (Huangjueping)", description: "Calle del grafiti y campus artístico al aire libre con fachadas pintadas al completo.", category: "sightseeing" },
+      { id: "act-6-2", time: "13:00", title: "Almuerzo de Fideos Picantes de Chongqing", description: "Probar fideos locales Chongqing Xiaomian en un local tradicional.", category: "dining" },
+      { id: "act-6-3", time: "15:30", title: "Raffles City Chongqing", description: "Rascacielos horizontal flotante con vistas increíbles en la confluencia de los ríos.", category: "sightseeing" },
+      { id: "act-6-4", time: "20:00", title: "Paseo nocturno en barco por el río", description: "Opcional: crucero de 1 hora para admirar los rascacielos iluminados desde el agua.", category: "sightseeing" }
     ],
-    notes: "Reserva las entradas del crucero con antelación si te interesa."
+    notes: "Puedes reservar el crucero en el mismo hotel o usando Trip.com."
   },
   {
     id: "day-7",
@@ -163,19 +163,19 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Chengdu Zen Tea House Hotel",
-      nameChinese: "成都禅茶一味酒店",
-      address: "Wuhou District, Chengdu, Sichuan",
-      addressChinese: "四川省成都市武侯区 (近武侯祠/锦里)",
+      name: "GINLAN SONG Qingtang Hotel (Chengdu Chunxi Road & Taikoo Li)",
+      nameChinese: "景澜青棠酒店(成都春熙路太古里店)",
+      address: "No. 70 Shuwa North 2nd Street, Jinjiang District, Chengdu, Sichuan, China (+86-28-83503666)",
+      addressChinese: "四川省成都市锦江区暑袜北二街70号 (电话: +86-28-83503666)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-7-1", time: "09:30", title: "Tren de alta velocidad a Chengdu", description: "Traslado a la estación y trayecto rápido.", category: "transit" },
-      { id: "act-7-2", time: "12:00", title: "Llegada al hotel en Chengdu", description: "Hacer el check-in. Un ritmo de vida mucho más relajado.", category: "hotel" },
-      { id: "act-7-3", time: "15:00", title: "Jinli Ancient Street", description: "Caminar por esta preciosa calle adornada con farolillos rojos.", category: "sightseeing" },
-      { id: "act-7-4", time: "19:30", title: "Ópera de Sichuan (Face Changing)", description: "Espectáculo tradicional con acrobacias y cambio de máscaras en Shufeng Yayun.", category: "sightseeing" }
+      { id: "act-7-1", time: "09:30", title: "Embarque en el tren rápido a Chengdu", description: "Traslado a la estación de Chongqing y salida del tren bala.", category: "transit" },
+      { id: "act-7-2", time: "12:00", title: "Llegada al Ginlan Song Hotel en Chengdu", description: "Hacer el check-in. Hotel excelentemente ubicado para caminar a Chunxi Road y Taikoo Li.", category: "hotel" },
+      { id: "act-7-3", time: "15:00", title: "Caminar por Jinli Ancient Street", description: "Calle tradicional peatonal adornada con farolillos rojos e iluminaciones clásicas.", category: "sightseeing" },
+      { id: "act-7-4", time: "19:30", title: "Ópera de Sichuan en Shufeng Yayun", description: "Espectáculo tradicional que incluye el famoso cambio de máscaras mágico ('Face Changing').", category: "sightseeing" }
     ],
-    notes: "Compra las entradas de la ópera con Trip.com antes del viaje para coger buenos asientos."
+    notes: "El email del hotel es ginlansong.4531wovtyab30rt@htlpartner.trip.com y el teléfono es +86-28-83503666."
   },
   {
     id: "day-8",
@@ -189,19 +189,19 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Chengdu Zen Tea House Hotel",
-      nameChinese: "成都禅茶一味酒店",
-      address: "Wuhou District, Chengdu, Sichuan",
-      addressChinese: "四川省成都市武侯区 (近武侯祠/锦里)",
+      name: "GINLAN SONG Qingtang Hotel (Chengdu Chunxi Road & Taikoo Li)",
+      nameChinese: "景澜青棠酒店(成都春熙路太古里店)",
+      address: "No. 70 Shuwa North 2nd Street, Jinjiang District, Chengdu, Sichuan, China (+86-28-83503666)",
+      addressChinese: "四川省成都市锦江区暑袜北二街70号 (电话: +86-28-83503666)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-8-1", time: "07:00", title: "Base de Cría de Pandas Gigantes", description: "Ver a los pandas activos comiendo bambú fresco por la mañana.", category: "sightseeing" },
-      { id: "act-8-2", time: "12:30", title: "Almuerzo de Mapo Tofu tradicional", description: "Comer en Chen Mapo Tofu, donde nació este mítico plato.", category: "dining" },
-      { id: "act-8-3", time: "15:00", title: "Parque del Pueblo (People's Park)", description: "Sentarse en una casa de té tradicional, pedir té verde y relajarse.", category: "sightseeing" },
-      { id: "act-8-4", time: "18:00", title: "Kuanzhai Xiangzi", description: "Callejones Anchos y Estrechos históricos con arquitectura tradicional.", category: "sightseeing" }
+      { id: "act-8-1", time: "07:00", title: "Base de Cría de Pandas Gigantes", description: "Llegar a primera hora para ver a los pandas desayunando bambú fresco en libertad.", category: "sightseeing" },
+      { id: "act-8-2", time: "12:30", title: "Almuerzo en Chen Mapo Tofu", description: "Comer el famoso plato Mapo Tofu en el legendario restaurante local original.", category: "dining" },
+      { id: "act-8-3", time: "15:00", title: "Relajarse en People's Park (Teahouse)", description: "Sentarse en una casa de té clásica, pedir té verde y ver a los jubilados jugar Mahjong.", category: "sightseeing" },
+      { id: "act-8-4", time: "18:00", title: "Caminar por Kuanzhai Xiangzi", description: "Callejones anchos y estrechos tradicionales restaurados con fachadas históricas.", category: "sightseeing" }
     ],
-    notes: "La reserva para la base de pandas es obligatoria online y se agota rápido en verano. ¡Reservar con 7 días de antelación!"
+    notes: "¡Imprescindible! Reservar las entradas de la Base de Pandas en WeChat con 7 días de antelación exacta."
   },
   {
     id: "day-9",
@@ -215,19 +215,19 @@ export const initialItinerary = [
       bookingStatus: "pending"
     },
     lodging: {
-      name: "Chengdu Zen Tea House Hotel",
-      nameChinese: "成都禅茶一味酒店",
-      address: "Wuhou District, Chengdu, Sichuan",
-      addressChinese: "四川省成都市武侯区 (近武侯祠/锦里)",
+      name: "GINLAN SONG Qingtang Hotel (Chengdu Chunxi Road & Taikoo Li)",
+      nameChinese: "景澜青棠酒店(成都春熙路太古里店)",
+      address: "No. 70 Shuwa North 2nd Street, Jinjiang District, Chengdu, Sichuan, China (+86-28-83503666)",
+      addressChinese: "四川省成都市锦江区暑袜北二街70号 (电话: +86-28-83503666)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-9-1", time: "08:30", title: "Tren bala a Leshan", description: "Visitar el Buda de piedra esculpido en acantilado más grande del mundo (71m).", category: "sightseeing" },
-      { id: "act-9-2", time: "10:30", title: "Paseo en barco junto al Buda", description: "El barco ofrece vistas frontales increíbles sin tener que hacer colas.", category: "sightseeing" },
-      { id: "act-9-3", time: "14:00", title: "Almuerzo en Leshan y regreso", description: "Probar especialidades locales de Leshan y tomar el tren de vuelta.", category: "transit" },
-      { id: "act-9-4", time: "19:00", title: "Cena de Chuan Chuan Xiang", description: "Cenar brochetas hervidas en caldo Sichuan, divertido y barato.", category: "dining" }
+      { id: "act-9-1", time: "08:30", title: "Tren bala a Leshan", description: "Excursión de un día al Buda de piedra más grande del mundo esculpido en acantilado.", category: "sightseeing" },
+      { id: "act-9-2", time: "10:30", title: "Paseo en barco para ver el Buda", description: "Ver el Buda frontalmente desde el barco para evitar las masivas colas de escaleras.", category: "sightseeing" },
+      { id: "act-9-3", time: "14:00", title: "Almuerzo en Leshan y regreso", description: "Probar especialidades de Leshan y volver en tren bala a Chengdu.", category: "transit" },
+      { id: "act-9-4", time: "19:00", title: "Cena de Chuan Chuan Xiang", description: "Cenar brochetas hervidas en caldo picante Sichuan, divertido e informal.", category: "dining" }
     ],
-    notes: "Si decides bajar a pie las escaleras al lado del Buda, prepárate para colas de 1 a 2 horas."
+    notes: "El barco de Leshan tarda unos 30 minutos y tiene una fila de espera muy rápida."
   },
   {
     id: "day-10",
@@ -241,19 +241,19 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Bell Tower Hotel Xi'an",
-      nameChinese: "西安钟楼饭店",
-      address: "110 South Street, Beilin District, Xi'an",
-      addressChinese: "陕西省西安市碑林区南大街110号",
+      name: "Jinjiang · Xi'an Bell Tower Original Copy Hotel",
+      nameChinese: "锦江·西安钟楼原拓酒店",
+      address: "1st Floor, Unit 1, Tower A, Jinzhong Building, No. 290 West 1st Road, Xincheng, Xi'an, Shaanxi, China (+86-29-87352266)",
+      addressChinese: "陕西省西安市新城区西一路290号金钟大厦A座1单元1楼 (电话: +86-29-87352266)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-10-1", time: "09:00", title: "Tren bala a Xi'an", description: "Cruzar las montañas Qinling en tren bala.", category: "transit" },
-      { id: "act-10-2", time: "13:30", title: "Check-in en el Hotel de Xi'an", description: "Registro en un hotel al lado de la Torre de la Campana.", category: "hotel" },
-      { id: "act-10-3", time: "16:00", title: "Bici por la Muralla Antigua", description: "Alquilar una bici arriba de la muralla del siglo XIV (14km).", category: "sightseeing" },
-      { id: "act-10-4", time: "19:00", title: "Cena en el Barrio Musulmán", description: "Probar parrillas de cordero, Roujiamo (hamburguesa china) y Yangrou Paomo.", category: "dining" }
+      { id: "act-10-1", time: "09:00", title: "Salida del tren bala a Xi'an", description: "Trayecto a través de las montañas de la provincia de Shaanxi.", category: "transit" },
+      { id: "act-10-2", time: "13:30", title: "Llegada al Jinjiang Original Copy Hotel", description: "Registro y check-in. Situado al lado del centro de Xi'an y de la Torre de la Campana.", category: "hotel" },
+      { id: "act-10-3", time: "16:00", title: "Bici por la Muralla Antigua de Xi'an", description: "Alquilar una bicicleta arriba de la muralla del siglo XIV y dar una vuelta al perímetro (14km).", category: "sightseeing" },
+      { id: "act-10-4", time: "19:00", title: "Paseo por el Barrio Musulmán", description: "Probar el pan picado en sopa de cordero (Yangrou Paomo) y pinchos asados al carbón.", category: "dining" }
     ],
-    notes: "Para alquilar la bici en la muralla se requiere dejar un depósito (puede ser digital por WeChat/Alipay)."
+    notes: "El teléfono del hotel es +86-29-87352266. Muy buena zona comercial."
   },
   {
     id: "day-11",
@@ -267,19 +267,19 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Bell Tower Hotel Xi'an",
-      nameChinese: "西安钟楼饭店",
-      address: "110 South Street, Beilin District, Xi'an",
-      addressChinese: "陕西省西安市碑林区南大街110号",
+      name: "Jinjiang · Xi'an Bell Tower Original Copy Hotel",
+      nameChinese: "锦江·西安钟楼原拓酒店",
+      address: "1st Floor, Unit 1, Tower A, Jinzhong Building, No. 290 West 1st Road, Xincheng, Xi'an, Shaanxi, China (+86-29-87352266)",
+      addressChinese: "陕西省西安市新城区西一路290号金钟大厦A座1单元1楼 (电话: +86-29-87352266)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-11-1", time: "08:30", title: "Guerreros de Terracota", description: "Ver los fosos de excavación con miles de figuras de arcilla a tamaño real.", category: "sightseeing" },
-      { id: "act-11-2", time: "13:30", title: "Almuerzo de Biang Biang Noodles", description: "Probar estos fideos anchos famosos hechos a mano con abundante ajo.", category: "dining" },
-      { id: "act-11-3", time: "16:00", title: "Gran Pagoda de la Oca Salvaje", description: "Templo budista de la dinastía Tang y pasear por los jardines.", category: "sightseeing" },
-      { id: "act-11-4", time: "20:00", title: "Fuentes musicales en la Plaza de la Pagoda", description: "Show gratuito de agua y luces, el más grande de Asia.", category: "sightseeing" }
+      { id: "act-11-1", time: "08:30", title: "Museo de los Guerreros de Terracota", description: "Contemplar las excavaciones del primer emperador con miles de figuras a tamaño real.", category: "sightseeing" },
+      { id: "act-11-2", time: "13:30", title: "Almuerzo de Biang Biang Noodles", description: "Fideos anchos hechos a mano con abundante ajo y aceite picante.", category: "dining" },
+      { id: "act-11-3", time: "16:00", title: "Gran Pagoda de la Oca Salvaje", description: "Histórica pagoda budista de la dinastía Tang y jardines adyacentes.", category: "sightseeing" },
+      { id: "act-11-4", time: "20:00", title: "Fuentes de la Plaza Norte", description: "Show musical y de luces con agua, el más grande de Asia.", category: "sightseeing" }
     ],
-    notes: "La entrada a los Guerreros de Terracota requiere pasaporte físico original para acceder."
+    notes: "Es obligatorio llevar el pasaporte original físico para poder acceder a los Guerreros de Terracota."
   },
   {
     id: "day-12",
@@ -293,45 +293,45 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Beijing Novotel Peace Hotel",
-      nameChinese: "北京诺富特和平宾馆",
-      address: "3 Jinyu Hutong, Wangfujing, Dongcheng, Beijing",
-      addressChinese: "北京市东城区王府井金鱼胡同3号",
+      name: "Bolly Wood Hotel (Beijing Wangfujing Street Palace Museum)",
+      nameChinese: "北京天安门故宫宝欐酒店",
+      address: "No. 189 Dongsi South Street, Dongcheng, Beijing, China (+86-10-65228888)",
+      addressChinese: "北京市东城区东四南大街189号 (电话: +86-10-65228888)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-12-1", time: "08:30", title: "Tren bala hacia Pekín", description: "Traslado por la mañana y trayecto de alta velocidad.", category: "transit" },
-      { id: "act-12-2", time: "14:30", title: "Check-in en Pekín", description: "Registro en el hotel situado en Wangfujing.", category: "hotel" },
-      { id: "act-12-3", time: "17:00", title: "Paseo por los Hutongs de Houhai", description: "Caminar por callejones antiguos alrededor de los lagos de Houhai.", category: "sightseeing" },
-      { id: "act-12-4", time: "19:30", title: "Cena en Wangfujing Street", description: "Cena en una zona peatonal vibrante rodeada de tiendas y comida.", category: "dining" }
+      { id: "act-12-1", time: "08:30", title: "Tren bala hacia Pekín", description: "Embarque en el tren rápido matutino.", category: "transit" },
+      { id: "act-12-2", time: "14:30", title: "Llegada al Bolly Wood Hotel", description: "Registro y check-in en el hotel. Situado cerca de la peatonal de Wangfujing y la Ciudad Prohibida.", category: "hotel" },
+      { id: "act-12-3", time: "17:00", title: "Paseo por los Hutongs de Houhai", description: "Caminar por los callejones antiguos alrededor de los lagos de Houhai, hoy llenos de terrazas y música.", category: "sightseeing" },
+      { id: "act-12-4", time: "19:30", title: "Cena en Wangfujing", description: "Zona comercial con multitud de opciones de cena de comida callejera y moderna.", category: "dining" }
     ],
-    notes: "Para moverte por Pekín el metro es súper rápido y barato. Descarga el mapa offline de la app MetroMan."
+    notes: "El teléfono del hotel en Pekín es +86-10-65228888."
   },
   {
     id: "day-13",
     date: "2026-07-29",
     dayOfWeek: "Miércoles",
     city: "Pekín",
-    title: "La Ciudad Prohibida",
+    title: "La Ciudad Prohibida y el Templo del Cielo",
     transport: {
       type: "metro",
       details: "Metro de Pekín.",
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Beijing Novotel Peace Hotel",
-      nameChinese: "北京诺富特和平宾馆",
-      address: "3 Jinyu Hutong, Wangfujing, Dongcheng, Beijing",
-      addressChinese: "北京市东城区王府井金鱼胡同3号",
+      name: "Bolly Wood Hotel (Beijing Wangfujing Street Palace Museum)",
+      nameChinese: "北京天安门故宫宝欐酒店",
+      address: "No. 189 Dongsi South Street, Dongcheng, Beijing, China (+86-10-65228888)",
+      addressChinese: "北京市东城区东四南大街189号 (电话: +86-10-65228888)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-13-1", time: "08:00", title: "Plaza de Tiananmén y Ciudad Prohibida", description: "Entrar al impresionante Palacio Imperial de las dinastías Ming y Qing.", category: "sightseeing" },
-      { id: "act-13-2", time: "12:30", title: "Parque Jingshan (Colina del Carbón)", description: "Vistas panorámicas completas del tejado dorado de la Ciudad Prohibida.", category: "sightseeing" },
-      { id: "act-13-3", time: "15:00", title: "Templo del Cielo", description: "Visitar el pabellón donde los emperadores rezaban por las cosechas.", category: "sightseeing" },
-      { id: "act-13-4", time: "20:00", title: "Cena de Pato Pekín", description: "Probar el crujiente pato laqueado tradicional en restaurante local.", category: "dining" }
+      { id: "act-13-1", time: "08:00", title: "Plaza de Tiananmén y Ciudad Prohibida", description: "Acceso al monumental Palacio Imperial de los emperadores chinos. Visitar pabellones interiores.", category: "sightseeing" },
+      { id: "act-13-2", time: "12:30", title: "Parque Jingshan (Colina del Carbón)", description: "Subida al mirador de la colina para contemplar los tejados dorados completos del palacio.", category: "sightseeing" },
+      { id: "act-13-3", time: "15:00", title: "Visita al Templo del Cielo", description: "Visitar el majestuoso pabellón circular donde el emperador rezaba por las cosechas.", category: "sightseeing" },
+      { id: "act-13-4", time: "20:00", title: "Cena de Pato Pekín", description: "Cenar el crujiente pato laqueado tradicional en un restaurante especializado de Pekín.", category: "dining" }
     ],
-    notes: "¡ATENCIÓN! La Ciudad Prohibida cierra los lunes y las entradas salen a la venta con 7 días de antelación exacta a las 20:00 hora de China. Se agotan en SEGUNDOS."
+    notes: "¡ATENCIÓN! La Ciudad Prohibida abre reservas con 7 días de antelación exacta a las 20:00 hora local china. Se agotan inmediatamente."
   },
   {
     id: "day-14",
@@ -341,33 +341,33 @@ export const initialItinerary = [
     title: "La Gran Muralla en Mutianyu",
     transport: {
       type: "taxi",
-      details: "Coche privado / DiDi para ir a la Gran Muralla.",
+      details: "Coche privado contratado / Didi hacia Mutianyu.",
       bookingStatus: "booked"
     },
     lodging: {
-      name: "Beijing Novotel Peace Hotel",
-      nameChinese: "北京诺富特和平宾馆",
-      address: "3 Jinyu Hutong, Wangfujing, Dongcheng, Beijing",
-      addressChinese: "北京市东城区王府井金鱼胡同3号",
+      name: "Bolly Wood Hotel (Beijing Wangfujing Street Palace Museum)",
+      nameChinese: "北京天安门故宫宝欐酒店",
+      address: "No. 189 Dongsi South Street, Dongcheng, Beijing, China (+86-10-65228888)",
+      addressChinese: "北京市东城区东四南大街189号 (电话: +86-10-65228888)",
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-14-1", time: "07:30", title: "Traslado a Mutianyu", description: "Trayecto de 1.5 horas al norte de Pekín para ir a la muralla.", category: "transit" },
-      { id: "act-14-2", time: "09:30", title: "Paseo por la Gran Muralla", description: "Subida en teleférico y recorrer las torres de piedra rodeadas de vegetación.", category: "sightseeing" },
-      { id: "act-14-3", time: "12:30", title: "Bajada en Tobogán", description: "Bajar deslizándote por el tobogán de metal gigante, divertidísimo.", category: "sightseeing" },
-      { id: "act-14-4", time: "16:00", title: "Parada en el Estadio Olímpico", description: "Fotos exteriores del Nido de Pájaro iluminado de camino de vuelta.", category: "sightseeing" }
+      { id: "act-14-1", time: "07:30", title: "Traslado a la Gran Muralla de Mutianyu", description: "Trayecto de hora y media al norte de Pekín.", category: "transit" },
+      { id: "act-14-2", time: "09:30", title: "Paseo por las torres de la muralla", description: "Subida en teleférico y recorrer las secciones de piedra rodeadas de vegetación en verano.", category: "sightseeing" },
+      { id: "act-14-3", time: "12:30", title: "Descenso en Tobogán", description: "Bajar de la muralla deslizándote por el divertido tobogán metálico gigante.", category: "sightseeing" },
+      { id: "act-14-4", time: "16:00", title: "Visita exterior al Estadio Olímpico (Nido de Pájaro)", description: "Parada exterior para fotos de la estructura iluminada de camino de vuelta.", category: "sightseeing" }
     ],
-    notes: "Lleva calzado cómodo con buen agarre y agua de sobra; en julio hace bastante calor y humedad."
+    notes: "Lleva ropa fresca, calzado deportivo de buen agarre y agua de sobra para subir la muralla."
   },
   {
     id: "day-15",
     date: "2026-07-31",
     dayOfWeek: "Viernes",
     city: "Pekín - Barcelona",
-    title: "Regreso a casa",
+    title: "Regreso a Barcelona",
     transport: {
       type: "flight",
-      details: "Vuelo internacional de vuelta Pekín - Barcelona.",
+      details: "Vuelo internacional de vuelta Air China CA571. PEK 02:30 -> BCN 08:15.",
       bookingStatus: "booked"
     },
     lodging: {
@@ -376,30 +376,12 @@ export const initialItinerary = [
       bookingStatus: "booked"
     },
     activities: [
-      { id: "act-15-1", time: "09:00", title: "Compras de última hora", description: "Comprar té, palillos grabados o recuerdos en los hutongs.", category: "shopping" },
-      { id: "act-15-2", time: "11:30", title: "Traslado al aeropuerto", description: "Check-out y trayecto al aeropuerto de Pekín.", category: "transit" },
-      { id: "act-15-3", time: "14:50", title: "Vuelo de regreso a Barcelona", description: "Vuelo internacional aterrizando en Barcelona el mismo día.", category: "transit" }
+      { id: "act-15-1", time: "00:00", title: "Check-in en el Aeropuerto de Pekín Capital (PEK)", description: "Llegada al aeropuerto por la noche para tomar el vuelo de la madrugada (02:30).", category: "transit" },
+      { id: "act-15-2", time: "02:30", title: "Salida del vuelo CA571", description: "Vuelo directo operado por Air China con destino Barcelona BCN, durando unas 12 horas.", category: "transit" },
+      { id: "act-15-3", time: "08:15", title: "Aterrizaje en Barcelona-El Prat (BCN)", description: "Llegada a Barcelona por la mañana hora local (diferencia horaria). ¡Fin del gran viaje!", category: "transit" }
     ],
-    notes: "Asegúrate de tramitar Tax-Free en el aeropuerto si compraste artículos caros."
+    notes: "El vuelo CA571 sale en la madrugada del viernes 31 (02:30 AM), por lo que debes ir al aeropuerto de Pekín durante la noche del jueves 30."
   }
-];
-
-export const initialPacking = [
-  { id: "pack-1", category: "Documentos", item: "Pasaporte original (vigencia mínima de 6 meses)", checked: false },
-  { id: "pack-2", category: "Documentos", item: "Visado de China impreso / captura (si aplica)", checked: false },
-  { id: "pack-3", category: "Documentos", item: "Seguro médico de viaje (impreso y digital)", checked: false },
-  { id: "pack-4", category: "Documentos", item: "Copias impresas de reservas de hoteles y billetes de tren", checked: false },
-  { id: "pack-5", category: "Electrónica", item: "Adaptador de enchufe tipo A / I (enchufes chinos planos)", checked: false },
-  { id: "pack-6", category: "Electrónica", item: "Batería externa (Powerbank) de máx 20.000 mAh", checked: false },
-  { id: "pack-7", category: "Electrónica", item: "Móvil libre con eSIM instalada (Airalo, Holafly, etc.)", checked: false },
-  { id: "pack-8", category: "Electrónica", item: "VPN configurada en móvil y portátil (Astrill, LetsVPN)", checked: false },
-  { id: "pack-9", category: "Ropa", item: "Ropa ligera de algodón/lino (calor húmedo en julio)", checked: false },
-  { id: "pack-10", category: "Ropa", item: "Zapatillas cómodas para caminar 20.000+ pasos diarios", checked: false },
-  { id: "pack-11", category: "Ropa", item: "Chubasquero o paraguas pequeño (lluvias cortas de verano)", checked: false },
-  { id: "pack-12", category: "Ropa", item: "Gorra y gafas de sol", checked: false },
-  { id: "pack-13", category: "Botiquín", item: "Antidiarreicos (Fortasec) y suero oral (comida picante)", checked: false },
-  { id: "pack-14", category: "Botiquín", item: "Medicamentos de uso personal con receta original", checked: false },
-  { id: "pack-15", category: "Botiquín", item: "Protector solar alta graduación y repelente de mosquitos", checked: false }
 ];
 
 export const initialSurvival = {
@@ -436,14 +418,15 @@ export const initialSurvival = {
 };
 
 export const initialExpenses = [
-  { id: "exp-1", title: "Vuelos transcontinentales Barcelona - Shanghái (ida/vuelta)", amountCny: 6300, amountEur: 800, category: "Vuelos", date: "2026-07-17" },
-  { id: "exp-2", title: "Hoteles Shanghái - The Bund (2 noches)", amountCny: 1575, amountEur: 200, category: "Hoteles", date: "2026-07-18" },
-  { id: "exp-3", title: "Tren bala Shanghái - Chongqing", amountCny: 630, amountEur: 80, category: "Trenes", date: "2026-07-20" },
-  { id: "exp-4", title: "Hoteles Chongqing - Jiefangbei (3 noches)", amountCny: 2362, amountEur: 300, category: "Hoteles", date: "2026-07-20" },
+  { id: "exp-1", title: "Vuelos transcontinentales Air China (CA840 / CA571)", amountCny: 6300, amountEur: 800, category: "Vuelos", date: "2026-07-17" },
+  { id: "exp-2", title: "Youli Hotel Shanghái (2 noches)", amountCny: 1575, amountEur: 200, category: "Hoteles", date: "2026-07-18" },
+  { id: "exp-3", title: "Vuelo doméstico 3U8974 Shanghái - Chongqing", amountCny: 860, amountEur: 110, category: "Vuelos", date: "2026-07-20" },
+  { id: "exp-4", title: "TheMoss Hotel Chongqing (3 noches)", amountCny: 2362, amountEur: 300, category: "Hoteles", date: "2026-07-20" },
   { id: "exp-5", title: "Tren bala Chongqing - Chengdu", amountCny: 118, amountEur: 15, category: "Trenes", date: "2026-07-23" },
-  { id: "exp-6", title: "Hoteles Chengdu - Zen Tea House (3 noches)", amountCny: 2200, amountEur: 280, category: "Hoteles", date: "2026-07-23" },
+  { id: "exp-6", title: "Ginlan Song Hotel Chengdu (3 noches)", amountCny: 2200, amountEur: 280, category: "Hoteles", date: "2026-07-23" },
   { id: "exp-7", title: "Tren bala Chengdu - Xi'an", amountCny: 220, amountEur: 28, category: "Trenes", date: "2026-07-26" },
-  { id: "exp-8", title: "Hoteles Xi'an - Bell Tower (2 noches)", amountCny: 1180, amountEur: 150, category: "Hoteles", date: "2026-07-26" },
+  { id: "exp-8", title: "Jinjiang Bell Tower Hotel Xi'an (2 noches)", amountCny: 1180, amountEur: 150, category: "Hoteles", date: "2026-07-26" },
   { id: "exp-9", title: "Tren bala Xi'an - Pekín", amountCny: 430, amountEur: 55, category: "Trenes", date: "2026-07-28" },
-  { id: "exp-10", title: "Hoteles Pekín - Novotel Peace (3 noches)", amountCny: 2750, amountEur: 350, category: "Hoteles", date: "2026-07-28" }
+  { id: "exp-10", title: "Bolly Wood Hotel Pekín (3 noches)", amountCny: 2750, amountEur: 350, category: "Hoteles", date: "2026-07-28" }
 ];
+export const initialPacking = [];

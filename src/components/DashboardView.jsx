@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { 
   IconCalendar, IconMapPin, IconClock, IconCloud, IconBriefcase, 
-  IconCheck, IconVolume, IconPlane, IconTrain, IconHotel, IconCompass 
+  IconCheck, IconVolume, IconPlane, IconTrain, IconHotel, IconCompass, IconInfo
 } from "./Icons";
 
-export default function DashboardView({ itinerary, packing, expenses, updateItinerary, showTaxiHelper }) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+export default function DashboardView({ itinerary, expenses, updateItinerary, showTaxiHelper, showFlightModal }) {
   const [chinaTime, setChinaTime] = useState("");
   const [localTime, setLocalTime] = useState("");
   const [previewDayId, setPreviewDayId] = useState("day-1");
 
   // Emergency Modal / Translate card state
   const [emergencyText, setEmergencyText] = useState(null);
-
-  const targetDate = new Date("2026-07-17T12:00:00"); // Departure date
 
   // Essentials checklist state
   const [essentials, setEssentials] = useState([
@@ -41,19 +38,6 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const now = new Date();
-      const difference = targetDate.getTime() - now.getTime();
-      
-      if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-      } else {
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((difference / 1000 / 60) % 60);
-        const seconds = Math.floor((difference / 1000) % 60);
-        setTimeLeft({ days, hours, minutes, seconds });
-      }
-
       const d = new Date();
       const optionsChina = { timeZone: "Asia/Shanghai", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false };
       setChinaTime(new Intl.DateTimeFormat("es-ES", optionsChina).format(d));
@@ -67,29 +51,32 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
 
   // Today's active day calculations
   const getTodayDay = () => {
-    if (typeof window === "undefined") return itinerary[0];
+    if (typeof window === "undefined" || !Array.isArray(itinerary) || itinerary.length === 0) return { day: null, label: "" };
 
     const todayStr = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    const matchedDay = itinerary.find(day => day.date === todayStr);
+    const matchedDay = itinerary.find(day => day && day.date === todayStr);
 
     if (matchedDay) {
       return { day: matchedDay, label: "Hoy en tu viaje" };
     }
     
     // Default fallback to preview selected day
-    const previewDay = itinerary.find(day => day.id === previewDayId) || itinerary[0];
-    return { day: previewDay, label: `Día de Vista Previa (Simulación)` };
+    const previewDay = itinerary.find(day => day && day.id === previewDayId) || itinerary[0];
+    return { day: previewDay, label: `Vista Previa: Día Simulado` };
   };
 
   const { day: activeDay, label: dayLabel } = getTodayDay();
 
   // Stats Calculations
-  const totalDays = itinerary.length;
-  const uniqueCities = [...new Set(itinerary.filter(d => d.city !== "En tránsito" && d.city !== "Tu casa").map(d => d.city))];
-  const totalExpenses = expenses.reduce((acc, curr) => acc + curr.amountEur, 0);
-  const flights = itinerary.filter(d => d.transport?.type === "flight").length;
-  const trains = itinerary.filter(d => d.transport?.type === "train").length;
-  const bookedHotels = itinerary.filter(d => d.lodging?.bookingStatus === "booked" && d.lodging.name !== "Noche a bordo del avión" && d.lodging.name !== "Tu casa").length;
+  const safeItinerary = Array.isArray(itinerary) ? itinerary : [];
+  const safeExpenses = Array.isArray(expenses) ? expenses : [];
+  
+  const totalDays = safeItinerary.length;
+  const uniqueCities = [...new Set(safeItinerary.filter(d => d && d.city !== "En tránsito" && d.city !== "Tu casa").map(d => d.city))];
+  const totalExpenses = safeExpenses.reduce((acc, curr) => acc + curr.amountEur, 0);
+  const flights = safeItinerary.filter(d => d?.transport?.type === "flight").length;
+  const trains = safeItinerary.filter(d => d?.transport?.type === "train").length;
+  const bookedHotels = safeItinerary.filter(d => d?.lodging?.bookingStatus === "booked" && d.lodging.name !== "Noche a bordo del avión" && d.lodging.name !== "Tu casa").length;
 
   const weatherGuides = [
     { city: "Shanghái", temp: "28°C - 36°C", desc: "Monzones cortos, mucha humedad y calor." },
@@ -119,39 +106,30 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
 
   const getTransportIcon = (type) => {
     switch (type) {
-      case "flight": return <IconPlane className="w-4 h-4 text-blue" />;
-      case "train": return <IconTrain className="w-4 h-4 text-gold" />;
-      default: return <IconCompass className="w-4 h-4 text-gray" />;
+      case "flight": return <IconPlane className="w-5 h-5 text-blue" />;
+      case "train": return <IconTrain className="w-5 h-5 text-gold" />;
+      default: return <IconCompass className="w-5 h-5 text-gray" />;
     }
+  };
+
+  // Extracts flight code from string
+  const handleFlightTrackClick = (details) => {
+    const flightMatch = (details || "").match(/(CA\d+|3U\d+)/i);
+    const flightCode = flightMatch ? flightMatch[0].toUpperCase() : "CA840";
+    showFlightModal(flightCode);
   };
 
   return (
     <div className="dashboard-container">
       
-      {/* Hero Welcome Card with Countdown */}
+      {/* Hero Welcome Card without Countdown */}
       <div className="hero-card glass-panel">
         <div className="hero-content">
-          <span className="badge">VIAJE A CHINA 🇨🇳</span>
-          <h1 className="hero-title">¡Rumbo a China!</h1>
-          <p className="hero-subtitle">Del 17 al 31 de Julio de 2026 | Barcelona - Pekín - Shanghái</p>
-
-          <div className="countdown-grid">
-            <div className="countdown-box">
-              <span className="countdown-value">{timeLeft.days}</span>
-              <span className="countdown-label">Días</span>
-            </div>
-            <div className="countdown-box">
-              <span className="countdown-value">{timeLeft.hours}</span>
-              <span className="countdown-label">Horas</span>
-            </div>
-            <div className="countdown-box">
-              <span className="countdown-value">{timeLeft.minutes}</span>
-              <span className="countdown-label">Mins</span>
-            </div>
-            <div className="countdown-box">
-              <span className="countdown-value">{timeLeft.seconds}</span>
-              <span className="countdown-label">Segs</span>
-            </div>
+          <span className="badge">VIAJE COMPLETO 🇨🇳</span>
+          <h1 className="hero-title">Rumbo a China</h1>
+          <p className="hero-subtitle">17 de Julio al 31 de Julio de 2026</p>
+          <div className="hero-dates-badge-box">
+            <span className="badge bg-gold text-dark font-bold">Barcelona ✈️ Shanghái ➔ Chongqing ➔ Chengdu ➔ Xi'an ➔ Pekín ✈️ Barcelona</span>
           </div>
         </div>
         <div className="hero-artwork">
@@ -160,87 +138,104 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
       </div>
 
       {/* DYNAMIC CARD: TODAY ON YOUR TRIP / PREVIEW */}
-      <div className="today-itinerary-card glass-panel">
-        <div className="today-card-header">
-          <div className="today-title-info">
-            <span className="today-badge">{dayLabel}</span>
-            <span className="today-date-text">{activeDay.date} ({activeDay.dayOfWeek}) - {activeDay.city}</span>
-          </div>
-          
-          {/* Dropdown to simulate other days */}
-          <div className="preview-selector">
-            <label htmlFor="preview-day-select">Ver otro día:</label>
-            <select 
-              id="preview-day-select"
-              value={previewDayId} 
-              onChange={(e) => setPreviewDayId(e.target.value)}
-            >
-              {itinerary.map((d, index) => (
-                <option key={d.id} value={d.id}>Día {index + 1}: {d.city} ({d.date})</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="today-card-body-grid">
-          {/* Main Info */}
-          <div className="today-main-info">
-            <h3 className="today-day-title">{activeDay.title}</h3>
+      {activeDay && (
+        <div className="today-itinerary-card glass-panel">
+          <div className="today-card-header">
+            <div className="today-title-info">
+              <span className="today-badge">{dayLabel}</span>
+              <span className="today-date-text">{activeDay.date} ({activeDay.dayOfWeek}) - {activeDay.city}</span>
+            </div>
             
-            {/* Lodging Box with Taxi Helper */}
-            {activeDay.lodging && activeDay.lodging.name !== "Noche a bordo del avión" && activeDay.lodging.name !== "Tu casa" && (
-              <div className="today-lodging-box">
-                <div className="today-lodging-details">
-                  <IconHotel className="w-5 h-5 text-jade" />
-                  <div>
-                    <span className="today-hotel-lbl">Hotel de hoy:</span>
-                    <span className="today-hotel-name">{activeDay.lodging.name}</span>
-                    <span className="today-hotel-address">{activeDay.lodging.address}</span>
+            {/* Dropdown to simulate other days */}
+            <div className="preview-selector">
+              <label htmlFor="preview-day-select">Ver otro día:</label>
+              <select 
+                id="preview-day-select"
+                value={previewDayId} 
+                onChange={(e) => setPreviewDayId(e.target.value)}
+              >
+                {safeItinerary.map((d, index) => (
+                  <option key={d.id} value={d.id}>Día {index + 1}: {d.city} ({d.date})</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="today-card-body-grid">
+            {/* Main Info */}
+            <div className="today-main-info">
+              <h3 className="today-day-title">{activeDay.title}</h3>
+              
+              {/* Lodging Box with Taxi Helper */}
+              {activeDay.lodging && activeDay.lodging.name !== "Noche a bordo del avión" && activeDay.lodging.name !== "Tu casa" && (
+                <div className="today-lodging-box">
+                  <div className="today-lodging-details">
+                    <IconHotel className="w-5 h-5 text-jade shrink-0" />
+                    <div>
+                      <span className="today-hotel-lbl">Hotel:</span>
+                      <span className="today-hotel-name">{activeDay.lodging.name}</span>
+                      {activeDay.lodging.nameChinese && <span className="lodging-chinese-sub block font-bold text-gold text-xs">{activeDay.lodging.nameChinese}</span>}
+                      <span className="today-hotel-address">{activeDay.lodging.address}</span>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    className="btn-taxi-trigger bg-gold text-dark font-bold"
+                    onClick={() => showTaxiHelper(activeDay.lodging)}
+                  >
+                    🚕 Mostrar dirección al Taxista (Chino)
+                  </button>
+                </div>
+              )}
+
+              {/* Transport details */}
+              {activeDay.transport && (
+                <div className="today-transport-box flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    {getTransportIcon(activeDay.transport.type)}
+                    <span><strong>Trayecto:</strong> {activeDay.transport.details}</span>
+                  </div>
+                  <div className="flex items-center gap-2 ml-auto">
+                    <span className={`status-tag ${activeDay.transport.bookingStatus}`}>
+                      {activeDay.transport.bookingStatus === "booked" ? "Reservado" : "Pendiente"}
+                    </span>
+                    {activeDay.transport.type === "flight" && (
+                      <button
+                        type="button"
+                        className="btn-flight-track-pill bg-blue text-white"
+                        style={{ padding: "4px 10px", fontSize: "0.75rem", borderRadius: "4px", fontWeight: "bold" }}
+                        onClick={() => handleFlightTrackClick(activeDay.transport.details)}
+                      >
+                        ✈️ Estado Vuelo
+                      </button>
+                    )}
                   </div>
                 </div>
-                <button 
-                  type="button" 
-                  className="btn-taxi-trigger bg-gold text-dark"
-                  onClick={() => showTaxiHelper(activeDay.lodging)}
-                >
-                  🚕 Mostrar dirección al Taxista (Chino)
-                </button>
-              </div>
-            )}
+              )}
+            </div>
 
-            {/* Transport details */}
-            {activeDay.transport && (
-              <div className="today-transport-box">
-                {getTransportIcon(activeDay.transport.type)}
-                <span><strong>Trayecto:</strong> {activeDay.transport.details}</span>
-                <span className={`status-tag ${activeDay.transport.bookingStatus}`}>
-                  {activeDay.transport.bookingStatus === "booked" ? "Reservado" : "Pendiente"}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Activities checklist */}
-          <div className="today-activities-box">
-            <h4>Actividades del Día</h4>
-            {(!activeDay.activities || activeDay.activities.length === 0) ? (
-              <p className="no-acts">No hay actividades planificadas para hoy.</p>
-            ) : (
-              <ul className="today-activities-list">
-                {activeDay.activities.map(act => (
-                  <li key={act.id} className="today-act-item">
-                    <span className="act-time-lbl">{act.time}</span>
-                    <div className="act-bullet-text">
-                      <span className="act-title-lbl">{act.title}</span>
-                      {act.description && <span className="act-desc-lbl">{act.description}</span>}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+            {/* Activities checklist */}
+            <div className="today-activities-box">
+              <h4>Actividades del Día</h4>
+              {(!activeDay.activities || activeDay.activities.length === 0) ? (
+                <p className="no-acts">No hay actividades planificadas para hoy.</p>
+              ) : (
+                <ul className="today-activities-list">
+                  {activeDay.activities.map(act => (
+                    <li key={act.id} className="today-act-item">
+                      <span className="act-time-lbl">{act.time}</span>
+                      <div className="act-bullet-text">
+                        <span className="act-title-lbl">{act.title}</span>
+                        {act.description && <span className="act-desc-lbl">{act.description}</span>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Grid: Stats, Clocks, Weather, Emergency, Essentials */}
       <div className="dashboard-grid">
@@ -275,7 +270,7 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
               </div>
               <div className="stat-item">
                 <span className="stat-label">Coste Estimado</span>
-                <span className="stat-val">{totalExpenses} €</span>
+                <span className="stat-val">{totalExpenses.toFixed(0)} €</span>
               </div>
             </div>
             <div className="cities-badge-list">
@@ -299,14 +294,14 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
               </div>
               <div className="clock-divider"></div>
               <div className="clock-item">
-                <span className="clock-city text-red">Pekín (China)</span>
+                <span className="clock-city">China (Mandarín)</span>
                 <span className="clock-time text-gold">{chinaTime || "--:--:--"}</span>
-                <span className="clock-diff">+6 horas de diferencia</span>
+                <span className="clock-diff block text-xs mt-1">+6h en verano</span>
               </div>
             </div>
           </div>
 
-          {/* EMERGENCY CARD (CRITICAL UX TRAVEL HELP) */}
+          {/* Emergency Card (UX Feature) */}
           <div className="card glass-panel emergency-card">
             <h2 className="card-title text-red">
               🚨 Teléfonos de Emergencia y Ayuda
@@ -327,45 +322,45 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
             </div>
 
             <div className="consular-info-box">
-              <h5>Consulado Español en China (Emergencia Consular)</h5>
-              <p>Embajada en Pekín: <a href="tel:+8613911283186">+86 139 1128 3186</a></p>
-              <p>Consulado en Shanghái: <a href="tel:+8613917471591">+86 139 1747 1591</a></p>
-              <p>Consulado en Chengdu: <a href="tel:+8618382498259">+86 183 8249 8259</a></p>
+              <h5>Consulado General de España en Shanghái</h5>
+              <p>📍 12F, 390 Fuzhou Rd, Huangpu, Shanghai</p>
+              <p>📞 Teléfono de Emergencia Consular: <a href="tel:+8613917477111">+86 139 1747 7111</a></p>
             </div>
 
             <div className="emergency-translations-section">
-              <h5>Frases de Emergencia Rápida (Toca para escuchar)</h5>
+              <h5>💬 Traducciones Médicas / Auxilio Rápido:</h5>
               <div className="emg-phrases-list">
-                {emergencyPhrases.map(phr => (
+                {emergencyPhrases.map(phrase => (
                   <div 
-                    key={phr.esp} 
-                    className="emg-phrase-row" 
+                    key={phrase.esp} 
+                    className="emg-phrase-row"
                     onClick={() => {
-                      handleSpeak(phr.hanzi);
-                      setEmergencyText(phr);
+                      setEmergencyText(phrase);
+                      handleSpeak(phrase.hanzi);
                     }}
+                    title="Pulsa para agrandar y pronunciar en voz alta"
                   >
                     <div className="emg-phrase-meanings">
-                      <span className="emg-phrase-esp">{phr.esp}</span>
-                      <span className="emg-phrase-hanzi">{phr.hanzi}</span>
+                      <span className="emg-phrase-esp">{phrase.esp}</span>
+                      <span className="emg-phrase-hanzi">{phrase.hanzi}</span>
                     </div>
-                    <button type="button" className="emg-speak-btn">
-                      <IconVolume className="w-4 h-4 text-white" />
-                    </button>
+                    <button type="button" className="emg-speak-btn">🔊</button>
                   </div>
                 ))}
               </div>
             </div>
           </div>
+
         </div>
 
-        {/* Right Column: Essentials & Weather */}
+        {/* Right Column: Essentials Checklist & Weather */}
         <div className="dashboard-col">
           {/* Essentials Checklist */}
           <div className="card glass-panel">
             <h2 className="card-title">
               <IconCheck className="w-5 h-5 text-jade" /> Preparativos Críticos
             </h2>
+            <p className="card-description">Cosas obligatorias a completar antes de salir o al aterrizar:</p>
             <ul className="essentials-list">
               {essentials.map(item => (
                 <li 
@@ -373,9 +368,9 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
                   className={`essential-item ${item.checked ? "checked" : ""}`}
                   onClick={() => toggleEssential(item.id)}
                 >
-                  <div className="checkbox">
-                    {item.checked && <IconCheck className="w-4 h-4 text-white" />}
-                  </div>
+                  <span className="checkbox">
+                    {item.checked && <span className="text-white text-xs">✓</span>}
+                  </span>
                   <span className="essential-text">{item.text}</span>
                 </li>
               ))}
@@ -387,9 +382,6 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
             <h2 className="card-title">
               <IconCloud className="w-5 h-5 text-blue" /> Clima en Julio
             </h2>
-            <p className="card-description">
-              Julio es verano húmedo en China. Se caracteriza por altas temperaturas y lluvias breves pero intensas (monzones).
-            </p>
             <div className="weather-list">
               {weatherGuides.map(item => (
                 <div key={item.city} className="weather-item">
@@ -406,42 +398,35 @@ export default function DashboardView({ itinerary, packing, expenses, updateItin
 
       </div>
 
-      {/* EMERGENCY TRANSLATION FULLSCREEN DISPLAY */}
+      {/* Emergency Phrase Fullscreen Modal */}
       {emergencyText && (
         <div className="taxi-modal-overlay" onClick={() => setEmergencyText(null)}>
           <div className="taxi-modal-content high-contrast" onClick={(e) => e.stopPropagation()}>
-            <button className="taxi-close-btn" onClick={() => setEmergencyText(null)}>✕ Cerrar</button>
+            <button className="taxi-close-btn" onClick={() => setEmergencyText(null)}>CERRAR</button>
             <div className="taxi-modal-header">
-              <span className="taxi-card-badge">AYUDA DE EMERGENCIA / 紧急求助</span>
+              <span className="taxi-card-badge bg-red text-white">MENSAJE DE AUXILIO</span>
               <button 
                 type="button" 
-                className="speak-btn-large" 
+                className="speak-btn-large"
                 onClick={() => handleSpeak(emergencyText.hanzi)}
               >
-                🔊 Pronunciar en Mandarín
+                🔊 Pronunciar
               </button>
             </div>
-            <div className="taxi-card-body text-center">
-              <p className="taxi-chinese-intro text-red" style={{ fontSize: "1.2rem", fontWeight: "bold" }}>请帮帮我！/ ¡Por favor ayúdeme!</p>
-              
+            <div className="taxi-card-body">
+              <p className="taxi-chinese-intro text-center">Enseña este mensaje a un policía o transeúnte:</p>
               <div className="taxi-address-box">
-                <h1 className="taxi-hotel-name-chinese" style={{ fontSize: "2.8rem", lineHeight: "1.3", margin: "20px 0" }}>
-                  {emergencyText.hanzi}
-                </h1>
-                <p className="taxi-hotel-address-chinese" style={{ fontSize: "1.3rem" }}>
-                  Pinyin: {emergencyText.pinyin}
-                </p>
+                <span className="taxi-hotel-name-chinese block" style={{ fontSize: "2.4rem", fontWeight: "bold" }}>{emergencyText.hanzi}</span>
+                <span className="taxi-hotel-address-chinese block text-sm mt-4">{emergencyText.pinyin}</span>
               </div>
-
-              <div className="taxi-address-english-box">
-                <h3 className="taxi-hotel-name-english" style={{ fontSize: "1.5rem" }}>
-                  {emergencyText.esp}
-                </h3>
+              <div className="taxi-address-english-box text-center">
+                <span className="taxi-hotel-name-english">{emergencyText.esp}</span>
               </div>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }

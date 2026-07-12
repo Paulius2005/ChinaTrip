@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { 
   IconCalendar, IconMapPin, IconPlane, IconTrain, IconHotel, 
   IconShoppingBag, IconUtensils, IconPlus, IconTrash, IconEdit, 
-  IconCheck, IconInfo, IconChevronDown, IconChevronRight, IconClock
+  IconCheck, IconInfo, IconChevronDown, IconChevronRight, IconClock, IconCompass
 } from "./Icons";
 
-export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelper }) {
+export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelper, showFlightModal }) {
   const [selectedCity, setSelectedCity] = useState("Todas");
   const [expandedDays, setExpandedDays] = useState({ "day-1": true, "day-2": true }); // Default expanded days
   
@@ -14,7 +14,9 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
   const [addingActivityToDayId, setAddingActivityToDayId] = useState(null); // Day ID
   const [newActivity, setNewActivity] = useState({ time: "09:00", title: "", description: "", category: "sightseeing" });
   
-  const cities = ["Todas", ...new Set(itinerary.map(d => d.city).filter(c => c !== "En tránsito" && c !== "Tu casa"))];
+  const safeItinerary = Array.isArray(itinerary) ? itinerary : [];
+
+  const cities = ["Todas", ...new Set(safeItinerary.map(d => d?.city || "").filter(c => c && c !== "En tránsito" && c !== "Tu casa"))];
 
   const toggleDayExpanded = (dayId) => {
     setExpandedDays(prev => ({
@@ -24,7 +26,7 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
   };
 
   const toggleBookingStatus = (dayId, type) => {
-    const updated = itinerary.map(day => {
+    const updated = safeItinerary.map(day => {
       if (day.id === dayId) {
         if (type === "transport" && day.transport) {
           return {
@@ -52,7 +54,7 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
 
   const handleEditDaySave = (e) => {
     e.preventDefault();
-    const updated = itinerary.map(day => day.id === editingDay.id ? editingDay : day);
+    const updated = safeItinerary.map(day => day.id === editingDay.id ? editingDay : day);
     updateItinerary(updated);
     setEditingDay(null);
   };
@@ -61,7 +63,7 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
     if (!newActivity.title) return;
     
     const activityId = `act-${Date.now()}`;
-    const updated = itinerary.map(day => {
+    const updated = safeItinerary.map(day => {
       if (day.id === dayId) {
         return {
           ...day,
@@ -79,11 +81,11 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
   const handleDeleteActivity = (dayId, activityId) => {
     if (!confirm("¿Seguro que deseas eliminar esta actividad?")) return;
     
-    const updated = itinerary.map(day => {
+    const updated = safeItinerary.map(day => {
       if (day.id === dayId) {
         return {
           ...day,
-          activities: day.activities.filter(act => act.id !== activityId)
+          activities: (day.activities || []).filter(act => act.id !== activityId)
         };
       }
       return day;
@@ -111,7 +113,8 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
     }
   };
 
-  const filteredItinerary = itinerary.filter(day => {
+  const filteredItinerary = safeItinerary.filter(day => {
+    if (!day) return false;
     if (selectedCity === "Todas") return true;
     return day.city === selectedCity;
   });
@@ -139,6 +142,7 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
         <div className="timeline-line"></div>
         
         {filteredItinerary.map((day, index) => {
+          if (!day) return null;
           const isExpanded = !!expandedDays[day.id];
           
           return (
@@ -188,13 +192,30 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
                       <div className="meta-card">
                         <div className="meta-card-header">
                           <span className="meta-card-title">Transporte</span>
-                          <button 
-                            className={`status-badge ${day.transport.bookingStatus}`}
-                            onClick={() => toggleBookingStatus(day.id, "transport")}
-                            title="Haz clic para cambiar estado"
-                          >
-                            {day.transport.bookingStatus === "booked" ? "Reservado" : "Pendiente"}
-                          </button>
+                          <div className="lodging-status-actions">
+                            {day.transport.type === "flight" && (
+                              <button
+                                type="button"
+                                className="taxi-trigger-pill bg-blue text-white"
+                                onClick={() => {
+                                  const detailsStr = day.transport.details || "";
+                                  const flightMatch = detailsStr.match(/(CA\d+|3U\d+)/i);
+                                  const flightCode = flightMatch ? flightMatch[0].toUpperCase() : "CA840";
+                                  showFlightModal(flightCode);
+                                }}
+                                title="Ver detalles y seguimiento en vivo del vuelo"
+                              >
+                                ✈️ Estado Vuelo
+                              </button>
+                            )}
+                            <button 
+                              className={`status-badge ${day.transport.bookingStatus}`}
+                              onClick={() => toggleBookingStatus(day.id, "transport")}
+                              title="Haz clic para cambiar estado"
+                            >
+                              {day.transport.bookingStatus === "booked" ? "Reservado" : "Pendiente"}
+                            </button>
+                          </div>
                         </div>
                         <div className="meta-card-body">
                           {getTransportIcon(day.transport.type)}
@@ -307,7 +328,7 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
                       <p className="no-activities">Sin actividades planificadas para este día. ¡Pulsa el botón de arriba para añadir!</p>
                     ) : (
                       <div className="activities-timeline">
-                        {day.activities.map(activity => (
+                        {(day.activities || []).map(activity => (
                           <div key={activity.id} className="activity-item">
                             <div className="activity-icon-bullet">
                               {getActivityIcon(activity.category)}
