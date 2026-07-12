@@ -165,7 +165,7 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
     <div className="dashboard-container">
       
       {/* Hero Welcome Card without Countdown */}
-      <div className="hero-card glass-panel">
+      <div className="hero-card glass-panel" style={{ marginBottom: "10px" }}>
         <div className="hero-content">
           <span className="badge">VIAJE COMPLETO 🇨🇳</span>
           <h1 className="hero-title">Rumbo a China</h1>
@@ -179,12 +179,26 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
         </div>
       </div>
 
+      {/* Compact Clocks strip at the top */}
+      <div className="glass-panel" style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "6px 12px", marginBottom: "10px", borderRadius: "10px", fontSize: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ color: "#94a3b8" }}>🇪🇸 España:</span>
+          <strong style={{ fontSize: "0.85rem", color: "#fff" }}>{localTime ? localTime.slice(0, 5) : "--:--"}</strong>
+        </div>
+        <div style={{ width: "1px", height: "12px", background: "rgba(255,255,255,0.15)" }}></div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ color: "#94a3b8" }}>🇨🇳 China:</span>
+          <strong style={{ fontSize: "0.85rem", color: "#eab308" }}>{chinaTime ? chinaTime.slice(0, 5) : "--:--"}</strong>
+          <span style={{ fontSize: "0.6rem", color: "#64748b" }}>(+6h)</span>
+        </div>
+      </div>
+
       {/* CALENDARIO DE RUTA INTERACTIVO */}
-      <div className="card glass-panel route-calendar-card" style={{ marginBottom: "14px", padding: "12px" }}>
-        <h3 className="card-title" style={{ fontSize: "0.85rem", color: "#eab308", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+      <div className="card glass-panel route-calendar-card" style={{ marginBottom: "10px", padding: "10px" }}>
+        <h3 className="card-title" style={{ fontSize: "0.8rem", color: "#eab308", marginBottom: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
           📅 Calendario de Ruta (Toca un día para ver su plan)
         </h3>
-        <div className="calendar-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "6px" }}>
+        <div className="calendar-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "5px" }}>
           {safeItinerary.map((d, index) => {
             const isSelected = d.id === previewDayId;
             const isToday = d.date === new Date().toISOString().split("T")[0];
@@ -207,28 +221,28 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
                   flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "5px 2px",
+                  padding: "4px 2px",
                   background: isSelected ? "rgba(234, 179, 8, 0.18)" : isToday ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.02)",
                   border: isSelected ? "1px solid #eab308" : isToday ? "1px dashed rgba(234, 179, 8, 0.5)" : "1px solid rgba(255,255,255,0.05)",
                   borderRadius: "8px",
                   color: isSelected ? "#eab308" : "#fff",
                   cursor: "pointer",
-                  minHeight: "56px",
+                  minHeight: "52px",
                   position: "relative",
                   transition: "all 0.2s ease"
                 }}
               >
                 {/* Small indicator badges */}
                 <div style={{ display: "flex", gap: "2px", position: "absolute", top: "2px", right: "2px" }}>
-                  {hasFlight && <span style={{ fontSize: "0.55rem" }}>✈️</span>}
-                  {hasTrain && <span style={{ fontSize: "0.55rem" }}>🚄</span>}
+                  {hasFlight && <span style={{ fontSize: "0.5rem" }}>✈️</span>}
+                  {hasTrain && <span style={{ fontSize: "0.5rem" }}>🚄</span>}
                 </div>
                 {isToday && (
                   <span style={{ position: "absolute", bottom: "2px", right: "2px", width: "4px", height: "4px", background: "#ef4444", borderRadius: "50%" }}></span>
                 )}
 
-                <span style={{ fontSize: "0.6rem", color: isSelected ? "#eab308" : "#94a3b8", fontWeight: "bold" }}>D{index + 1}</span>
-                <span style={{ fontSize: "0.95rem", fontWeight: "800", margin: "1px 0", color: isSelected ? "#eab308" : "#fff" }}>{dayNum}</span>
+                <span style={{ fontSize: "0.55rem", color: isSelected ? "#eab308" : "#94a3b8", fontWeight: "bold" }}>D{index + 1}</span>
+                <span style={{ fontSize: "0.9rem", fontWeight: "800", margin: "1px 0", color: isSelected ? "#eab308" : "#fff" }}>{dayNum}</span>
                 <span style={{ fontSize: "0.55rem", background: "rgba(255,255,255,0.05)", padding: "1px 3px", borderRadius: "3px", color: isSelected ? "#eab308" : "#cbd5e1" }}>
                   {cityAbbr}
                 </span>
@@ -240,71 +254,58 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
 
       {/* DYNAMIC CARD: TODAY ON YOUR TRIP / PREVIEW */}
       {activeDay && (
-        <div className="today-itinerary-card glass-panel">
-          <div className="today-card-header">
+        <div className="today-itinerary-card glass-panel" style={{ marginBottom: "10px", padding: "12px" }}>
+          <div className="today-card-header" style={{ marginBottom: "8px" }}>
             <div className="today-title-info">
               <span className="today-badge">{dayLabel}</span>
-              <span className="today-date-text">{formatDateDisplay(activeDay.date)} ({activeDay.dayOfWeek}) - {activeDay.city}</span>
-            </div>
-            
-            {/* Dropdown to simulate other days */}
-            <div className="preview-selector">
-              <label htmlFor="preview-day-select">Ver otro día:</label>
-              <select 
-                id="preview-day-select"
-                value={previewDayId} 
-                onChange={(e) => setPreviewDayId(e.target.value)}
-              >
-                {safeItinerary.map((d, index) => (
-                  <option key={d.id} value={d.id}>Día {index + 1}: {d.city} ({formatDateDisplay(d.date)})</option>
-                ))}
-              </select>
+              <span className="today-date-text" style={{ fontSize: "0.75rem" }}>{formatDateDisplay(activeDay.date)} ({activeDay.dayOfWeek}) - {activeDay.city}</span>
             </div>
           </div>
 
           <div className="today-card-body-grid">
             {/* Main Info */}
             <div className="today-main-info">
-              <h3 className="today-day-title">{activeDay.title}</h3>
+              <h3 className="today-day-title" style={{ fontSize: "0.95rem", margin: "0 0 8px 0" }}>{activeDay.title}</h3>
               
               {/* Lodging Box with Taxi Helper */}
               {activeDay.lodging && activeDay.lodging.name !== "Noche a bordo del avión" && activeDay.lodging.name !== "Tu casa" && (
-                <div className="today-lodging-box">
-                  <div className="today-lodging-details">
+                <div className="today-lodging-box" style={{ padding: "8px", gap: "6px", marginBottom: "8px" }}>
+                  <div className="today-lodging-details" style={{ gap: "6px" }}>
                     <IconHotel className="w-5 h-5 text-jade shrink-0" />
                     <div>
-                      <span className="today-hotel-lbl">Hotel:</span>
-                      <span className="today-hotel-name">{activeDay.lodging.name}</span>
-                      {activeDay.lodging.nameChinese && <span className="lodging-chinese-sub block font-bold text-gold text-xs">{activeDay.lodging.nameChinese}</span>}
-                      <span className="today-hotel-address">{activeDay.lodging.address}</span>
+                      <span className="today-hotel-lbl" style={{ fontSize: "0.65rem" }}>Hotel:</span>
+                      <span className="today-hotel-name" style={{ fontSize: "0.75rem" }}>{activeDay.lodging.name}</span>
+                      {activeDay.lodging.nameChinese && <span className="lodging-chinese-sub block font-bold text-gold" style={{ fontSize: "0.65rem" }}>{activeDay.lodging.nameChinese}</span>}
+                      <span className="today-hotel-address" style={{ fontSize: "0.65rem" }}>{activeDay.lodging.address}</span>
                     </div>
                   </div>
                   <button 
                     type="button" 
                     className="btn-taxi-trigger bg-gold text-dark font-bold"
                     onClick={() => showTaxiHelper(activeDay.lodging)}
+                    style={{ padding: "4px 8px", fontSize: "0.65rem" }}
                   >
-                    🚕 Mostrar dirección al Taxista (Chino)
+                    🚕 Dirección al Taxista (Chino)
                   </button>
                 </div>
               )}
 
               {/* Transport details */}
               {activeDay.transport && (
-                <div className="today-transport-box flex-wrap gap-2">
-                  <div className="flex items-center gap-2">
+                <div className="today-transport-box flex-wrap gap-2" style={{ padding: "8px", marginBottom: "8px" }}>
+                  <div className="flex items-center gap-2" style={{ fontSize: "0.75rem" }}>
                     {getTransportIcon(activeDay.transport.type)}
                     <span><strong>Trayecto:</strong> {activeDay.transport.details}</span>
                   </div>
                   <div className="flex items-center gap-2 ml-auto">
-                    <span className={`status-tag ${activeDay.transport.bookingStatus}`}>
+                    <span className={`status-tag ${activeDay.transport.bookingStatus}`} style={{ fontSize: "0.65rem", padding: "2px 6px" }}>
                       {activeDay.transport.bookingStatus === "booked" ? "Reservado" : "Pendiente"}
                     </span>
                     {activeDay.transport.type === "flight" && (
                       <button
                         type="button"
                         className="btn-flight-track-pill bg-blue text-white"
-                        style={{ padding: "4px 10px", fontSize: "0.75rem", borderRadius: "4px", fontWeight: "bold" }}
+                        style={{ padding: "3px 8px", fontSize: "0.65rem", borderRadius: "4px", fontWeight: "bold" }}
                         onClick={() => handleFlightTrackClick(activeDay.transport.details)}
                       >
                         ✈️ Estado Vuelo
@@ -317,17 +318,17 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
 
             {/* Activities checklist */}
             <div className="today-activities-box">
-              <h4>Actividades del Día</h4>
+              <h4 style={{ fontSize: "0.75rem", margin: "0 0 6px 0" }}>Actividades del Día</h4>
               {(!activeDay.activities || activeDay.activities.length === 0) ? (
-                <p className="no-acts">No hay actividades planificadas para hoy.</p>
+                <p className="no-acts" style={{ fontSize: "0.7rem" }}>No hay actividades planificadas para hoy.</p>
               ) : (
-                <ul className="today-activities-list">
+                <ul className="today-activities-list" style={{ gap: "4px" }}>
                   {activeDay.activities.map(act => (
-                    <li key={act.id} className="today-act-item">
-                      <span className="act-time-lbl">{act.time}</span>
+                    <li key={act.id} className="today-act-item" style={{ padding: "4px 0" }}>
+                      <span className="act-time-lbl" style={{ fontSize: "0.65rem", padding: "2px 4px" }}>{act.time}</span>
                       <div className="act-bullet-text">
-                        <span className="act-title-lbl">{act.title}</span>
-                        {act.description && <span className="act-desc-lbl">{act.description}</span>}
+                        <span className="act-title-lbl" style={{ fontSize: "0.75rem" }}>{act.title}</span>
+                        {act.description && <span className="act-desc-lbl" style={{ fontSize: "0.65rem" }}>{act.description}</span>}
                       </div>
                     </li>
                   ))}
@@ -338,90 +339,36 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
         </div>
       )}
 
-      {/* QUICK CONVERTER CARD */}
-      <div className="card glass-panel quick-converter-card" style={{ marginBottom: "14px" }}>
-        <h3 className="card-title" style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.95rem" }}>
-          <IconDollar className="w-5 h-5 text-gold" /> Calculadora de Cambio Rápido
-        </h3>
-        <p className="card-description" style={{ fontSize: "0.75rem", color: "#94a3b8", marginBottom: "8px" }}>Convierte importes al instante entre Euros (€) y Yuanes (¥):</p>
-        <div className="converter-flex" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div className="converter-input-box" style={{ flex: 1 }}>
-            <label style={{ fontSize: "0.7rem", color: "#94a3b8", display: "block", marginBottom: "3px" }}>Euros (€)</label>
+      {/* COMPACT CONVERTER CARD */}
+      <div className="card glass-panel quick-converter-card" style={{ marginBottom: "14px", padding: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+          <h3 className="card-title" style={{ fontSize: "0.8rem", color: "#eab308", margin: "0", display: "flex", alignItems: "center", gap: "4px" }}>
+            <IconDollar className="w-4 h-4 text-gold" /> Cambio Rápido (1 € = {exchangeRate} ¥)
+          </h3>
+        </div>
+        <div className="converter-flex" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "4px", background: "rgba(0,0,0,0.2)", padding: "4px 8px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <span style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: "bold" }}>EUR</span>
             <input 
               type="number" 
-              placeholder="0.00"
+              placeholder="0"
               value={calcEur}
               onChange={(e) => handleCalcEurChange(e.target.value)}
-              style={{ width: "100%", padding: "5px 8px", fontSize: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "4px", color: "#fff" }}
+              style={{ width: "100%", background: "transparent", border: "none", color: "#fff", outline: "none", fontSize: "0.8rem", textAlign: "right", padding: "0" }}
             />
           </div>
-          <div className="converter-sign" style={{ fontSize: "1.1rem", color: "#eab308", paddingTop: "10px" }}>⇄</div>
-          <div className="converter-input-box" style={{ flex: 1 }}>
-            <label style={{ fontSize: "0.7rem", color: "#94a3b8", display: "block", marginBottom: "3px" }}>Yuanes (¥)</label>
+          <div style={{ fontSize: "0.9rem", color: "#eab308" }}>⇄</div>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "4px", background: "rgba(0,0,0,0.2)", padding: "4px 8px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <span style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: "bold" }}>CNY</span>
             <input 
               type="number" 
-              placeholder="0.00"
+              placeholder="0"
               value={calcCny}
               onChange={(e) => handleCalcCnyChange(e.target.value)}
-              style={{ width: "100%", padding: "5px 8px", fontSize: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "4px", color: "#fff" }}
+              style={{ width: "100%", background: "transparent", border: "none", color: "#fff", outline: "none", fontSize: "0.8rem", textAlign: "right", padding: "0" }}
             />
           </div>
         </div>
-        <p className="converter-note" style={{ fontSize: "0.65rem", color: "#94a3b8", marginTop: "6px", textAlign: "center", marginBlockEnd: "0" }}>
-          Tipo de cambio: 1 € = {exchangeRate} ¥
-        </p>
-      </div>
-
-      {/* Grid: Clocks & Essentials */}
-      <div className="dashboard-grid">
-        
-        {/* Left Column: Clocks */}
-        <div className="dashboard-col">
-          {/* Clocks Card */}
-          <div className="card glass-panel clock-card">
-            <h2 className="card-title">
-              <IconClock className="w-5 h-5 text-gold" /> Reloj de Viaje (Husos Horarios)
-            </h2>
-            <div className="clock-flex">
-              <div className="clock-item">
-                <span className="clock-city">España (Local)</span>
-                <span className="clock-time">{localTime || "--:--:--"}</span>
-              </div>
-              <div className="clock-divider"></div>
-              <div className="clock-item">
-                <span className="clock-city">China (Mandarín)</span>
-                <span className="clock-time text-gold">{chinaTime || "--:--:--"}</span>
-                <span className="clock-diff block text-xs mt-1">+6h en verano</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Essentials */}
-        <div className="dashboard-col">
-          {/* Essentials Checklist */}
-          <div className="card glass-panel">
-            <h2 className="card-title">
-              <IconCheck className="w-5 h-5 text-jade" /> Preparativos Críticos
-            </h2>
-            <p className="card-description">Cosas obligatorias a completar antes de salir o al aterrizar:</p>
-            <ul className="essentials-list">
-              {essentials.map(item => (
-                <li 
-                  key={item.id} 
-                  className={`essential-item ${item.checked ? "checked" : ""}`}
-                  onClick={() => toggleEssential(item.id)}
-                >
-                  <span className="checkbox">
-                    {item.checked && <span className="text-white text-xs">✓</span>}
-                  </span>
-                  <span className="essential-text">{item.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
       </div>
 
       {/* Emergency Phrase Fullscreen Modal */}
