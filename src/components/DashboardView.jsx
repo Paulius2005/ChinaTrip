@@ -72,6 +72,16 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
   const safeExpenses = Array.isArray(expenses) ? expenses : [];
   
   const totalDays = safeItinerary.length;
+  
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    const day = parseInt(parts[2], 10);
+    const monthIndex = parseInt(parts[1], 10);
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    return `${day} ${months[monthIndex - 1] || "jul"}`;
+  };
   const uniqueCities = [...new Set(safeItinerary.filter(d => d && d.city !== "En tránsito" && d.city !== "Tu casa").map(d => d.city))];
   const totalExpenses = safeExpenses.reduce((acc, curr) => acc + curr.amountEur, 0);
   const flights = safeItinerary.filter(d => d?.transport?.type === "flight").length;
@@ -143,7 +153,7 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
           <div className="today-card-header">
             <div className="today-title-info">
               <span className="today-badge">{dayLabel}</span>
-              <span className="today-date-text">{activeDay.date} ({activeDay.dayOfWeek}) - {activeDay.city}</span>
+              <span className="today-date-text">{formatDateDisplay(activeDay.date)} ({activeDay.dayOfWeek}) - {activeDay.city}</span>
             </div>
             
             {/* Dropdown to simulate other days */}
@@ -155,7 +165,7 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
                 onChange={(e) => setPreviewDayId(e.target.value)}
               >
                 {safeItinerary.map((d, index) => (
-                  <option key={d.id} value={d.id}>Día {index + 1}: {d.city} ({d.date})</option>
+                  <option key={d.id} value={d.id}>Día {index + 1}: {d.city} ({formatDateDisplay(d.date)})</option>
                 ))}
               </select>
             </div>

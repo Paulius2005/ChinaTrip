@@ -2,6 +2,16 @@ import React, { useState } from "react";
 import { IconDollar, IconPlus, IconTrash, IconCalendar } from "./Icons";
 
 export default function ExpenseTracker({ expenses, budget, updateExpenses, updateBudget }) {
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    const day = parseInt(parts[2], 10);
+    const monthIndex = parseInt(parts[1], 10);
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    return `${day} ${months[monthIndex - 1] || "jul"}`;
+  };
+
   const [exchangeRate, setExchangeRate] = useState(7.8); // 1 EUR = 7.8 CNY by default
   const [isAdding, setIsAdding] = useState(false);
   const [newExpense, setNewExpense] = useState({
@@ -292,7 +302,7 @@ export default function ExpenseTracker({ expenses, budget, updateExpenses, updat
                       <div className="expense-title-details">
                         <span className="expense-item-title">{exp.title}</span>
                         <span className="expense-item-meta">
-                          <IconCalendar className="w-3 h-3" /> {exp.date} | {exp.category}
+                          <IconCalendar className="w-3 h-3" /> {formatDateDisplay(exp.date)} | {exp.category}
                         </span>
                       </div>
                     </div>

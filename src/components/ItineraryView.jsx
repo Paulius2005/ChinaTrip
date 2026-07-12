@@ -16,6 +16,16 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
   
   const safeItinerary = Array.isArray(itinerary) ? itinerary : [];
 
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    const day = parseInt(parts[2], 10);
+    const monthIndex = parseInt(parts[1], 10);
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    return `${day} ${months[monthIndex - 1] || "jul"}`;
+  };
+
   const cities = ["Todas", ...new Set(safeItinerary.map(d => d?.city || "").filter(c => c && c !== "En tránsito" && c !== "Tu casa"))];
 
   const toggleDayExpanded = (dayId) => {
@@ -156,7 +166,7 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
               <div className="day-header glass-panel" onClick={() => toggleDayExpanded(day.id)}>
                 <div className="day-header-main">
                   <div className="day-header-dates">
-                    <span className="day-date">{day.date}</span>
+                    <span className="day-date">{formatDateDisplay(day.date)}</span>
                     <span className="day-week">{day.dayOfWeek}</span>
                   </div>
                   <div className="day-header-info">
