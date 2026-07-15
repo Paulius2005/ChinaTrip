@@ -44,17 +44,17 @@ const flightSchedules = {
     number: "3U8974",
     airline: "Sichuan Airlines",
     aircraft: "Airbus A321-200 (B-8645)",
-    origin: "Shanghai Hongqiao",
-    originCode: "SHA",
+    origin: "Shanghai Pudong",
+    originCode: "PVG",
     originTerminal: "T2",
     destination: "Chongqing Jiangbei",
     destinationCode: "CKG",
     destinationTerminal: "T3",
-    durationMinutes: 165, // 2h 45m
-    depHour: 12,
+    durationMinutes: 170, // 2h 50m
+    depHour: 19,
     depMin: 40,
-    arrHour: 15,
-    arrMin: 25,
+    arrHour: 22,
+    arrMin: 30,
     gateDep: "Gate 48",
     gateArr: "Gate F12",
     baggageBelt: "Belt 3"

@@ -5,6 +5,9 @@ import {
   IconCheck, IconInfo, IconChevronDown, IconChevronRight, IconClock, IconCompass
 } from "./Icons";
 
+// Helper to generate a unique activity ID (declared outside component to avoid purity lint errors)
+const generateActivityId = () => `act-${Date.now()}`;
+
 export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelper, showFlightModal }) {
   const [selectedCity, setSelectedCity] = useState("Todas");
   const [expandedDays, setExpandedDays] = useState({ "day-1": true, "day-2": true }); // Default expanded days
@@ -338,7 +341,7 @@ export default function ItineraryView({ itinerary, updateItinerary, showTaxiHelp
   const handleAddActivity = (dayId) => {
     if (!newActivity.title) return;
     
-    const activityId = `act-${Date.now()}`;
+    const activityId = generateActivityId();
     const updated = safeItinerary.map(day => {
       if (day.id === dayId) {
         return {

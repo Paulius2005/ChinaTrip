@@ -47,7 +47,9 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
   useEffect(() => {
     const saved = localStorage.getItem("china_trip_essentials");
     if (saved) {
-      try { setEssentials(JSON.parse(saved)); } catch (e) {}
+      setTimeout(() => {
+        try { setEssentials(JSON.parse(saved)); } catch (e) {}
+      }, 0);
     }
   }, []);
 
@@ -171,7 +173,7 @@ export default function DashboardView({ itinerary, expenses, updateItinerary, sh
           <h1 className="hero-title">Rumbo a China</h1>
           <p className="hero-subtitle">17 de Julio al 31 de Julio de 2026</p>
           <div className="hero-dates-badge-box">
-            <span className="badge bg-gold text-dark font-bold">Barcelona ✈️ Shanghái ➔ Chongqing ➔ Chengdu ➔ Xi'an ➔ Pekín ✈️ Barcelona</span>
+            <span className="badge bg-gold text-dark font-bold">{"Barcelona ✈️ Shanghái ➔ Chongqing ➔ Chengdu ➔ Xi'an ➔ Pekín ✈️ Barcelona"}</span>
           </div>
         </div>
         <div className="hero-artwork">

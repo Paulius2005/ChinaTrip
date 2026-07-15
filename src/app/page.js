@@ -43,43 +43,7 @@ export default function Home() {
   const [flightLoading, setFlightLoading] = useState(false);
   const [flightError, setFlightError] = useState(null);
 
-  // Monitor network connectivity
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsOffline(!navigator.onLine);
-      
-      const handleOnline = () => {
-        setIsOffline(false);
-        if (pendingSync) {
-          triggerSync();
-        }
-      };
-      
-      const handleOffline = () => {
-        setIsOffline(true);
-        setSynced(false);
-      };
-
-      window.addEventListener("online", handleOnline);
-      window.addEventListener("offline", handleOffline);
-
-      return () => {
-        window.removeEventListener("online", handleOnline);
-        window.removeEventListener("offline", handleOffline);
-      };
-    }
-  }, [pendingSync, itinerary, survival, expenses, budget]);
-
-  // Detect Trip ID from URL and Load Data
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const tripParam = params.get("trip") || "default";
-      setTripId(tripParam);
-      setInputTripId(tripParam === "default" ? "" : tripParam);
-      loadTripData(tripParam);
-    }
-  }, []);
+  // useEffect hooks moved below function declarations to avoid ESLint errors
 
   const checkAndPatchItinerary = (rawItinerary) => {
     if (!Array.isArray(rawItinerary)) return { patched: rawItinerary, didChange: false };
@@ -223,6 +187,48 @@ export default function Home() {
       setSaving(false);
     }
   };
+
+  // Monitor network connectivity
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        setIsOffline(!navigator.onLine);
+      }, 0);
+      
+      const handleOnline = () => {
+        setIsOffline(false);
+        if (pendingSync) {
+          triggerSync();
+        }
+      };
+      
+      const handleOffline = () => {
+        setIsOffline(true);
+        setSynced(false);
+      };
+
+      window.addEventListener("online", handleOnline);
+      window.addEventListener("offline", handleOffline);
+
+      return () => {
+        window.removeEventListener("online", handleOnline);
+        window.removeEventListener("offline", handleOffline);
+      };
+    }
+  }, [pendingSync, itinerary, survival, expenses, budget]);
+
+  // Detect Trip ID from URL and Load Data
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tripParam = params.get("trip") || "default";
+      setTimeout(() => {
+        setTripId(tripParam);
+        setInputTripId(tripParam === "default" ? "" : tripParam);
+        loadTripData(tripParam);
+      }, 0);
+    }
+  }, []);
 
   // Save changes locally and try syncing
   const saveTripData = async (updatedFields) => {
